@@ -1,0 +1,12 @@
+.avatar{
+    width: 22px !important;
+    height: 22px !important ;
+    font-size: 11px !important;
+}
+
+.settingbutton ul li{
+    padding: 1px 8px;
+    font-size: 13px;
+    margin-left: 8px;
+
+}

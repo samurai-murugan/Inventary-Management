@@ -1,0 +1,69 @@
+.loginPageContainer {
+  display: flex;
+  box-shadow: 4px 0px 4px 4px #ece6e6;
+  width: 100%;
+  justify-content: center;
+  border-radius: 30px;
+  overflow: hidden;  /* Ensure the content is clipped to respect the border-radius */
+}
+
+.mainContainer {
+  display: flex;
+  justify-content: center;
+  background-color:whitesmoke;
+  width: 60%;
+  height: 580px;
+  border-radius: 30px;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.leftSide {
+  
+  background-color: rgb(156, 156, 233);
+  width: 50%;
+  border-bottom-right-radius: 100px;
+  border-top-right-radius: 100px;
+ 
+}
+
+.rightSide {
+  background-color:whitesmoke;
+  width: 50%;
+  height: 100%; 
+  margin-top: 110px;
+ 
+}
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+  text-decoration: underline;
+}
+
+
+
+
+.closearrow{
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+ }
+
+ .closearrow button{
+  margin-right: 5px;
+
+ }

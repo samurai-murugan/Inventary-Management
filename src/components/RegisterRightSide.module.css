@@ -1,0 +1,19 @@
+.RegisterRightSideContainer {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;  
+    justify-content: center;
+    align-items: center !important;     
+    height: 80vh;           
+    text-align: center; 
+    color: white;   
+        margin-top: 35px !important;
+
+      
+  }
+  .Register .MuiButton-root{
+    border-radius: 10px !important;
+
+  }
+  

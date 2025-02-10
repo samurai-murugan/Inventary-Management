@@ -1,0 +1,62 @@
+.RightContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    
+}
+
+.IconButton {
+    padding: 10px !important;
+    border: 1px solid #c2c2c2 !important;
+}
+
+.IconButton2 {
+    padding: 10px !important;
+    border: 1px solid #c2c2c2 !important;
+}
+
+.IconButton3 {
+    padding: 10px !important;
+    border: 1px solid #c2c2c2 !important;
+}
+
+.IconButton svg {
+    size: 10px;
+    color: #2c2c2c !important;
+}
+
+
+.inputField .MuiInputBase-input {
+    padding: 8px;
+    font-size: 50px;
+}
+
+
+.inputField input {
+
+    font-size: 13px;
+}
+
+
+.inputLabels {
+    font-size: 14px !important;
+    color: #6e5959 !important;
+    margin-bottom: -15px !important;
+}
+
+.ErrorMessage {
+    margin-top: 0px !important;
+    margin-bottom: -11px !important;
+   
+    color: red !important;
+    font-size: 12px !important
+}
+
+.orLogin {
+    color: #6e5959 !important;
+}
+
+.requiredAsterisk {
+    color: red;
+}

@@ -1,0 +1,52 @@
+.mainContainer {
+    display: flex;
+    box-shadow: 4px 0px 4px 4px #ece6e6;
+    width: 100%;
+    justify-content: center;
+    border-radius: 30px;
+    overflow: hidden;  
+  }
+  
+  
+.loginPageContainer {
+  display: flex;
+  box-shadow: 4px 0px 4px 4px #ece6e6;
+  width: 100%;
+  justify-content: center;
+  border-radius: 30px;
+  overflow: hidden;  /* Ensure the content is clipped to respect the border-radius */
+}
+  
+  .leftSide {
+   
+    background-color:whitesmoke;
+    width: 50%;
+    margin-top: 60px;
+   
+  }
+  
+  .rightSide {
+    background-color: rgb(156, 156, 233);
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+    width: 50%;
+    height: 100%; 
+  
+   
+  }
+  a:link {
+    text-decoration: none;
+  }
+  
+  a:visited {
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  a:active {
+    text-decoration: underline;
+  }
+  

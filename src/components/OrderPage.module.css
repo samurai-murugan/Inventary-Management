@@ -1,0 +1,303 @@
+
+.heading {
+    text-align: start;
+    margin: 20px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+
+  .noDataCell {
+    padding: 10px;
+    font-size: 11px;
+    color: #888;
+  }
+
+  .iconbaground {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+
+  .iconButton {
+    color: #333;
+  }
+  
+
+  .addButtontop {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .addButtontop button {
+    margin-left: auto;
+    padding: 6px 10px;
+  }
+  
+  .addButtontop .handleAddOrderDialogOpen {
+    margin-right: 30px;
+    border-radius: 10px;
+  }
+  
+  .addButtontop p {
+    font-size: 12px;
+  }
+  
+  /* Add Button Hover */
+  .addButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Dialog Styling */
+  .dialog {
+    padding: 20px;
+  }
+  
+  .dialogTitle {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  /* Paragraph Container for Dialog */
+  .paragrap {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Input Fields in Dialog */
+  .textField {
+    margin-top: 20px;
+  }
+  
+  .inputBaseRoot {
+    width: 100%;
+  }
+  
+  /* Cancel Button Styling */
+  .cancelButton {
+    background-color: #f0cece;
+    color: #333;
+  }
+  
+  .cancelButton:hover {
+    background-color: #aaa;
+  }
+  
+  /* Update Button Styling */
+  .updateButton {
+    background-color: #28a745;
+    color: white;
+    width: 10px !important;
+    font-size: 12px;
+  }
+  
+  .addButton:hover,
+  .updateButton:hover {
+    background-color: #218838;
+  }
+  
+  /* Add Value Button */
+  .addvalueButton {
+    background-color: red;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 10px;
+  }
+  
+  /* Delete Button Styling */
+  .deleteButton {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .deleteButton:hover {
+    background-color: #c82333;
+  }
+  
+  /* Add Value Button Styling */
+  .addvalueButton {
+    background-color: #c6d8e4 !important;
+    color: rgb(76, 76, 192) !important;
+  }
+  
+  /* Dialog Styles */
+  .dialog {
+    padding: 10px;
+    min-width: 500px;
+  }
+  
+  .dialogTitle {
+    width: 500px;
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: #1976d2;
+  }
+  
+  .paragrap p {
+    padding-bottom: -15px !important;
+    font-size: 12px;
+  }
+
+  
+  .paragrap p div {
+    width: 500px;
+  }
+  
+  .textField {
+    margin-top: 12px;
+    margin-bottom: 9px;
+    width: 100%;
+  }
+  
+  .inputBaseRoot {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    width: 500px;
+  }
+
+  .button {
+    text-transform: none;
+    margin: 8px;
+  }
+  
+  .cancelButton {
+    color: #000;
+    padding: 5px 12px;
+    background-color: #d7e2d4 !important;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    color: rgb(76, 76, 192) !important;
+  }
+  
+  .cancelButton:hover {
+    background-color: #f3e9e9 !important;
+  }
+  
+  /* Update Button Styling */
+  .updateButton {
+    border-radius: 10px;
+    background-color: #d7e2d4 !important;
+    color: #0a0c1f;
+    border: none;
+    padding: 5px 12px;
+    transition: background-color 0.3s;
+  }
+  
+  /* Delete Button Styling */
+  .deleteButton {
+    border-radius: 10px;
+    background-color: #d7e2d4 !important;
+    color: #0a0c1f;
+    border: none;
+    padding: 3px 10px;
+    transition: background-color 0.3s;
+  }
+  
+  /* Update Button Hover */
+  .updateButton:hover {
+    background-color: #f3e9e9 !important
+  }
+  
+  /* Delete Button Hover */
+  .deleteButton:hover {
+    background-color: #f3e9e9 !important
+  }
+  
+  /* Icon Button Styling */
+  .iconButton {
+    margin-right: 8px;
+    color: #3191f1;
+  }
+  
+  .iconButton:hover {
+    color: #1565c0;
+  }
+  
+  /* Icon Background Styling */
+  .iconbaground {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Verified and Not Verified Styles */
+  .verified {
+    color: green !important;
+  }
+  
+  .notVerified {
+    color: red !important;
+  }
+  
+  .paragrap p div {
+    width: 500px;
+  }
+  
+  .paragrap p {
+    padding-bottom: -15px !important;
+    font-size: 12px;
+  }
+  
+  div .labeles {
+    margin-bottom: -2px;
+    font-size: 13px;
+  }
+  
+  /* Select Input Field */
+  .selectinputfield {
+    padding: 10px !important;
+  }
+  
+  .selectsfields {
+    width: 99%;
+    height: 40px;
+    /* background-color: gainsboro; */
+  }
+  .radios{
+    background-color: white;
+  }
+  .addlabels {
+    margin-bottom: 0px;
+  }
+  
+  .closearrow {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+  
+  .closearrow button {
+    margin-right: 5px;
+  }
+  
+
+  .editdailogcontent{
+    margin-top: 3px !important;
+  }
+  .adrresLabels{
+    font-size: 13px;
+    margin-bottom: -15px;
+
+  }
+    
+  .MuiTypography-root{
+    font-size: 11px;
+  }
+  .radios div .MuiTypography-root {
+    font-size: 11px ;
+  }
+  /* .radioslabel label {
+    font-size: 10px;
+  } */
+
+ input {
+  background-color: white !important;
+ }
+
+ .viewContent p{
+  margin-top: -10px;
+  line-height: 2.5rem !important;
+ }
