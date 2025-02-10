@@ -593,7 +593,7 @@ const OrderTable: React.FC = () => {
             <Typography textTransform={'none'}>Cancel</Typography>
             </Button>
             <Button onClick={handleEditSubmit} color="primary" className={`${styles.button} ${styles.updateButton}`}  >
-             <Typography textTransform={'none'}>{loading ? 'Updating...' : 'Update'}</Typography> 
+             <Typography textTransform={'none'}> Update</Typography> 
             </Button>
           </DialogActions>
         </Dialog>
@@ -614,7 +614,7 @@ const OrderTable: React.FC = () => {
               <Typography textTransform={'none'}>Cancel</Typography>
             </Button>
             <Button onClick={handleDelete} color="primary" className={`${styles.button} ${styles.deleteButton}`}>
-              <Typography textTransform={'none'}>{loading ? 'Deleting...' : 'Delete'}</Typography>
+              <Typography textTransform={'none'}>Delete</Typography>
             </Button>
           </DialogActions>
         </Dialog>

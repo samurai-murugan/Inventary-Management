@@ -57,7 +57,7 @@ const PieChart = () => {
     }
   }, [data]);
 
-  return <div id="chartDiv" style={{ width: "80%", height: '200px' }}></div>;
+  return <div id="chartDiv" style={{ width: "100%", height: '200px' }}></div>;
 };
 
 export default PieChart;

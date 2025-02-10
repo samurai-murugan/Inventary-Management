@@ -121,7 +121,7 @@ const BarChart: React.FC = () => {
     };
   }, [data]);
   return (
-    <div id="BarChart" style={{ width: "80%", height: '200px' }}></div>
+    <div id="BarChart" style={{ width: "100%", height: '200px' }}></div>
   );
 };
 

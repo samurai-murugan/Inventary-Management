@@ -407,7 +407,7 @@ const ProductTable: React.FC = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseEditDialog} color="primary" className={`${styles.button} ${styles.cancelButton}`}><Typography textTransform={'none'}>Cancel</Typography></Button>
-            <Button onClick={handleEditSubmit} color="secondary" className={`${styles.button} ${styles.updateButton}`} disabled={loading}><Typography textTransform={'none'}>Update</Typography></Button>
+            <Button onClick={handleEditSubmit} color="primary" className={`${styles.button} ${styles.updateButton}`} disabled={loading}><Typography textTransform={'none'}>Update</Typography></Button>
           </DialogActions>
         </Dialog>
 
@@ -457,7 +457,7 @@ const ProductTable: React.FC = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseAddProductDialog} color="primary" className={`${styles.button} ${styles.cancelButton}`}><Typography textTransform={'none'}>Cancel</Typography></Button>
-            <Button onClick={handleAddProductSubmit} color="secondary" className={`${styles.button} ${styles.addvalueButton}`} disabled={loading}><Typography textTransform={'none'}>Add</Typography></Button>
+            <Button onClick={handleAddProductSubmit} color="primary" className={` ${styles.addvalueButton}`} disabled={loading}><Typography textTransform={'none'}>Add</Typography></Button>
           </DialogActions>
         </Dialog>
 

@@ -1,6 +1,6 @@
 
 
-import { Box, Grid } from '@mui/material';
+import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import PieChart from './PieChart';
 import BarChart from './BarChart';
@@ -39,17 +39,40 @@ const HomePageData: React.FC = () => {
   };
 
   return (
-    <Box sx={{ marginTop: 2.5, marginLeft: 2, fontSize: '0.6rem' }}>
-      <h1>Home Page</h1>
+    <Box sx={{ marginTop: 2.5,marginLeft:"10px", marginRight:"10px",  fontSize: '0.6rem' }}>
+      
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={6}>
-          <PieChart />
+      <Typography sx={{fontWeight:"bold" ,fontSize:'20px' ,marginLeft:"10px"}}>Home Page</Typography>
+      <Card sx={{ width: '100%', boxShadow: 'none', border: 'none' , marginRight:'10px',paddingRight:'30px'}}>
+      <CardContent sx={{marginLeft:1}}>
+       
+        
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={6}>
+            <Card sx={{ height: '100%', boxShadow: 1, borderRadius: '8px',marginLeft:'20px','&:hover': {
+          transform: 'scale(1.01)', 
+          boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.2)', 
+          cursor: 'pointer',
+        } }}>
+              <CardContent>
+                <PieChart />
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6}>
+            <Card sx={{ height: '100%', boxShadow: 1, borderRadius: '8px' ,'&:hover': {
+          transform: 'scale(1.01)', 
+          boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.2)', 
+          cursor: 'pointer',
+        } }}>
+              <CardContent>
+                <BarChart />
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={6} md={6}>
-          <BarChart />
-        </Grid>
-      </Grid>
+      </CardContent>
+    </Card>
 
       <Grid container spacing={3} sx={{ marginTop: 3 }}>
         {productDetails.map((product) => {
@@ -62,6 +85,7 @@ const HomePageData: React.FC = () => {
           );
         })}
       </Grid>
+   
     </Box>
   );
 };

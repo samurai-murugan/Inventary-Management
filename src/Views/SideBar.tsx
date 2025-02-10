@@ -11,8 +11,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
 import { FaHome, FaStore, FaBoxes } from 'react-icons/fa';
-// import { FaUserPlus } from 'react-icons/fa';
-import { BsPersonWorkspace } from 'react-icons/bs';
 import { BsCart4 } from "react-icons/bs";
 
 const drawerWidth = 240;
@@ -82,26 +80,51 @@ interface SidebarProps {
   onToggle: () => void;
   onSettingsClick: () => void;
   onProductPage: () => void;
-  onOrderProduct: ()=> void;
-  onHomepageDatas:()=> void;
+  onOrderProduct: () => void;
+  onHomepageDatas: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ open, onToggle, onSettingsClick, onProductPage,onOrderProduct,onHomepageDatas }) => {
-  const userRole = localStorage.getItem('userRole');
-  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
+const Sidebar: React.FC<SidebarProps> = ({
+  open,
+  onToggle,
+  onSettingsClick,
+  onProductPage,
+  onOrderProduct,
+  onHomepageDatas,
+}) => {
+  const [activeIndex, setActiveIndex] = React.useState<number>(0); 
 
-  const handleItemClick = (index: number) => {
-    setActiveIndex(prevIndex => (prevIndex === index ? null : index));
+  const sidebarRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node) && open) {
+        onToggle(); 
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open, onToggle]); 
+
+  const handleItemClick = (index: number, text: string) => {
+    setActiveIndex(index);
+    if (text === 'Products') {
+      onProductPage();
+    } else if (text === 'order') {
+      onOrderProduct();
+    } else if (text === 'Home') {
+      onHomepageDatas();
+    }
   };
 
   return (
-    <Drawer variant="permanent" open={open}>
+    <Drawer variant="permanent" open={open} ref={sidebarRef}>
       <DrawerHeader>
-        <IconButton color="inherit"
-          aria-label="open drawer"
-          onClick={onToggle}
-          edge="start"
-          sx={{ marginLeft: 0.5 }}>
+        <IconButton color="inherit" aria-label="open drawer" onClick={onToggle} edge="start" sx={{ marginLeft: 0.5 }}>
           {open ? <ChevronLeftIcon /> : <MenuIcon />}
         </IconButton>
       </DrawerHeader>
@@ -111,55 +134,26 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onToggle, onSettingsClick, onPr
           <Tooltip key={text} title={text} arrow placement="right-start">
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
-                 sx={[
+                sx={[
                   { minHeight: 48, px: 2.5 },
                   open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
                   activeIndex === index ? { backgroundColor: 'rgba(0, 0, 0, 0.08)' } : {},
                 ]}
-                onClick={() => {
-                  handleItemClick(index);
-                  if (text === 'Products') {
-                    onProductPage();
-                  }
-                 else if(text === 'order'){
-                    onOrderProduct();
-                  }
-                  else{
-                    onHomepageDatas();
-                  }
-                }}
+                onClick={() => handleItemClick(index, text)}
               >
-                <ListItemIcon  sx={[
+                <ListItemIcon
+                  sx={[
                     { minWidth: 0, justifyContent: 'center', fontSize: 'large' },
                     open ? { mr: 3 } : { mr: 'auto' },
-                  ]}>{icons[index]}</ListItemIcon>
+                  ]}
+                >
+                  {icons[index]}
+                </ListItemIcon>
                 {open && <ListItemText primary={text} />}
               </ListItemButton>
             </ListItem>
           </Tooltip>
         ))}
-
-        {/* {userRole === 'admin' && (
-          <Tooltip title="Settings" arrow placement="right-start">
-            <ListItem disablePadding>
-              <ListItemButton
-                sx={[ { minHeight: 48, px: 2.5 }]}
-                onClick={() => {
-                  handleItemClick(4);
-                  onSettingsClick();
-                }}
-              >
-                <ListItemIcon  sx={[
-                    { minWidth: 0, justifyContent: 'center', fontSize: 'large' },
-                    open ? { mr: 3 } : { mr: 'auto' },
-                  ]}>
-                  <FaUserPlus />
-                </ListItemIcon>
-                {open && <ListItemText primary="Settings" />}
-              </ListItemButton>
-            </ListItem>
-          </Tooltip>
-        )} */}
       </List>
     </Drawer>
   );

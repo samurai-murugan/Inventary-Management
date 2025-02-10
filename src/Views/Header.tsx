@@ -2,9 +2,9 @@ import * as React from 'react';
 import { AppBar, Toolbar, Typography, Avatar, IconButton, Menu, MenuItem, Divider } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { IoIosSettings } from "react-icons/io";
-import { FaUserPlus, FaSignOutAlt } from 'react-icons/fa'; // Import the logout icon
-import { useNavigate } from 'react-router-dom'; // Make sure you have react-router-dom installed
-import styles from "./Header.module.css"; // Your CSS module for styling
+import { FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom'; 
+import styles from "./Header.module.css"; 
 
 interface HeaderProps {
   open: boolean;
@@ -63,28 +63,26 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
             flexGrow: 1,
             paddingLeft: open ? "0px" : "25px",
             transition: 'padding-left 0.3s ease',
+            fontWeight:'bold'
           }}
         >
           Inventory Management
         </Typography>
 
-        {/* Settings Icon (Visible only for admin users) */}
         {userRole === "admin" && (
           <IconButton onClick={handleSettingsClick}>
             <IoIosSettings />
           </IconButton>
         )}
 
-        {/* Avatar Icon for User Options (Logout) */}
         <Avatar 
           className={styles.avatar} 
           sx={{ bgcolor: blue[700] }} 
-          onClick={handleAvatarClick} // Open the menu on Avatar click
+          onClick={handleAvatarClick} 
         >
           {avatarLetter}
         </Avatar>
 
-        {/* Settings Menu (Only for admin users) */}
         <Menu
           anchorEl={anchorElSettings}
           id="settings-menu"
@@ -99,7 +97,7 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
                 filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                 mt: 1.0,
                 '& .MuiAvatar-root': {
-                  width: 25,
+                  width: 20,
                   height: 25,
                   ml: -0.1,
                   mr: 1,
@@ -110,13 +108,13 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
                   display: 'block',
                   position: 'absolute',
                   top: 0,
-                  right: 14,
-                  width: 10,
+                  right: 15,
+                  width: 12,
                   height: 8,
                   bgcolor: 'background.paper',
                   transform: 'translateY(-50%) rotate(45deg)',
                   zIndex: 0,
-                  fontSize: 5
+                  fontSize: 2
                 },
               },
             },
@@ -136,14 +134,14 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
           id="avatar-menu"
           open={Boolean(anchorElAvatar)}  
           onClose={handleMenuClose}
-          className={styles.avatarMenu}
+          className={styles.settingbutton}
           slotProps={{
             paper: {
               elevation: 0,
               sx: {
                 overflow: 'visible',
                 filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                mt: 1.0,
+                mt: 1.5,
                 '& .MuiAvatar-root': {
                   width: 25,
                   height: 25,
@@ -171,7 +169,7 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
           anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }} 
         >
           <MenuItem onClick={handleLogout}>
-            <FaSignOutAlt style={{ marginRight: 10 }} />
+            <FaSignOutAlt style={{ marginRight: 10,padding:"1" }} />
             Logout
           </MenuItem>
         </Menu>
