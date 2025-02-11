@@ -92,14 +92,15 @@ const Sidebar: React.FC<SidebarProps> = ({
   onOrderProduct,
   onHomepageDatas,
 }) => {
-  const [activeIndex, setActiveIndex] = React.useState<number>(0); 
+  const [activeIndex, setActiveIndex] = React.useState<number>(0);
+  const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
 
   const sidebarRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node) && open) {
-        onToggle(); 
+        onToggle();
       }
     };
 
@@ -108,7 +109,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [open, onToggle]); 
+  }, [open, onToggle]);
+
+  React.useEffect(() => {
+   
+    const user = localStorage.getItem('userRole'); 
+    console.log(user,"user")
+    if (user === 'user') {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleItemClick = (index: number, text: string) => {
     setActiveIndex(index);
@@ -130,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       </DrawerHeader>
 
       <List>
-        {['Home', 'order', 'Products'].map((text, index) => (
+        {['Home', 'order'].map((text, index) => (
           <Tooltip key={text} title={text} arrow placement="right-start">
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
@@ -154,6 +164,32 @@ const Sidebar: React.FC<SidebarProps> = ({
             </ListItem>
           </Tooltip>
         ))}
+        
+        {/* Conditionally render the Products menu item if user is not logged in */}
+        {!isLoggedIn && (
+          <Tooltip key="Products" title="Products" arrow placement="right-start">
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton
+                sx={[
+                  { minHeight: 48, px: 2.5 },
+                  open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
+                  activeIndex === 2 ? { backgroundColor: 'rgba(0, 0, 0, 0.08)' } : {},
+                ]}
+                onClick={() => handleItemClick(2, 'Products')}
+              >
+                <ListItemIcon
+                  sx={[
+                    { minWidth: 0, justifyContent: 'center', fontSize: 'large' },
+                    open ? { mr: 3 } : { mr: 'auto' },
+                  ]}
+                >
+                  {icons[2]}
+                </ListItemIcon>
+                {open && <ListItemText primary="Products" />}
+              </ListItemButton>
+            </ListItem>
+          </Tooltip>
+        )}
       </List>
     </Drawer>
   );

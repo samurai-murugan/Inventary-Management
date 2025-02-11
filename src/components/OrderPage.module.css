@@ -68,11 +68,13 @@
   
   /* Input Fields in Dialog */
   .textField {
-    margin-top: 20px;
+    margin-top: 0px;
+    margin: 0px;
   }
   
   .inputBaseRoot {
     width: 100%;
+    margin: 0px;
   }
   
   /* Cancel Button Styling */
@@ -146,8 +148,9 @@
   }
   
   .textField {
-    margin-top: 12px;
-    margin-bottom: 9px;
+    /* margin-top: 12px; */
+    margin: 0px !important;
+    /* margin-bottom: 9px; */
     width: 100%;
   }
   
@@ -159,7 +162,7 @@
 
   .button {
     text-transform: none;
-    margin: 8px;
+    /* margin: 8px; */
   }
   
   .cancelButton {
@@ -237,13 +240,14 @@
   }
   
   .paragrap p {
-    padding-bottom: -15px !important;
+    /* padding-bottom: -15px !important; */
     font-size: 12px;
   }
   
-  div .labeles {
-    margin-bottom: -2px;
-    font-size: 13px;
+.labeles {
+    /* margin-bottom: -2px; */
+    margin: 0px;
+    font-size: 12px;
   }
   
   /* Select Input Field */
@@ -258,6 +262,7 @@
   }
   .radios{
     background-color: white;
+    margin: 0px !important;
   }
   .addlabels {
     margin-bottom: 0px;
@@ -284,13 +289,13 @@
   }
     
   .MuiTypography-root{
-    font-size: 11px;
+    font-size: 10px;
   }
   .radios div .MuiTypography-root {
     font-size: 11px ;
   }
   /* .radioslabel label {
-    font-size: 10px;
+    font-size: 8px;
   } */
 
  input {

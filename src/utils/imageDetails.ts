@@ -1,4 +1,4 @@
-import { Headphones } from "@mui/icons-material";
+
 
 // imageDetails.ts
 type ImageDetails = {

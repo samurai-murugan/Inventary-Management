@@ -14,4 +14,14 @@ code {
     monospace;
 }
 
-
+.mainButton{
+  color:white !important;
+  background-color: #1976d2 !important;
+  /* font-size: 0.9rem !important ; */
+}
+.mainButton p{
+  font-size: 0.9rem !important ;
+}
+.mainButton:hover{
+  background-color: #398cdf !important;
+}

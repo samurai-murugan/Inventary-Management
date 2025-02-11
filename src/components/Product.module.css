@@ -171,8 +171,8 @@ margin-bottom: 9px;
   width: 500px;
 }
 .textField {
-  margin-top: -12px;
-  margin-bottom: 12px;
+  /* margin-top: -12px;
+  margin-bottom: 12px; */
 
   width: 100%;
 }
@@ -276,8 +276,9 @@ margin-bottom: 9px;
  }
 
   div .labeles{
-    margin-bottom: -1px;
-    font-size: 14px;
+    /* margin-bottom: -1px; */
+    margin: 0px;
+    font-size: 12px;
   }
    
 
@@ -311,4 +312,8 @@ margin-bottom: 9px;
 
  tbody td {
   padding: 10px !important;
+ }
+ .addlabels{
+  margin: 0px;
+
  }

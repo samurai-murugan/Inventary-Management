@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Typography, Select, MenuItem, Box } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Typography, Select, MenuItem, Box, FormHelperText } from '@mui/material';
 import { IoAddCircleOutline, IoEyeOutline } from "react-icons/io5";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { MdModeEditOutline } from "react-icons/md";
@@ -326,7 +326,7 @@ const ProductTable: React.FC = () => {
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="primary" className={`${styles.button} ${styles.cancelButton}`}><Typography textTransform={'none'}>Close</Typography></Button>
+            <Button onClick={handleClose} color="primary" className="mainButton"><Typography textTransform={'none'}>Close</Typography></Button>
           </DialogActions>
         </Dialog>
 
@@ -348,8 +348,8 @@ const ProductTable: React.FC = () => {
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDeleteDialog} color="primary" className={`${styles.button} ${styles.cancelButton}`}><Typography textTransform={'none'}>Cancel</Typography></Button>
-            <Button onClick={handleDelete} color="secondary" className={`${styles.button} ${styles.deleteButton}`} disabled={loading}><Typography textTransform={'none'}>Delete</Typography></Button>
+            <Button onClick={handleCloseDeleteDialog} color="primary" className="mainButton"><Typography textTransform={'none'}>Cancel</Typography></Button>
+            <Button onClick={handleDelete} color="secondary"className="mainButton" disabled={loading}><Typography textTransform={'none'}>Delete</Typography></Button>
           </DialogActions>
         </Dialog>
 
@@ -380,8 +380,8 @@ const ProductTable: React.FC = () => {
 
 
 
-                <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-                  {editProductDetailsError.productnameError ? editProductDetailsError.productnameError : ' '}</p>
+                <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+                  {editProductDetailsError.productnameError ? editProductDetailsError.productnameError : ' '}</FormHelperText>
 
                 <p className={styles.labeles}>Quantity</p>
                 <TextField
@@ -390,8 +390,8 @@ const ProductTable: React.FC = () => {
                   onChange={(e) => setNewQuantity(e.target.value)}
                   className={`${styles.textField} ${styles.inputBaseRoot}`}
                 />
-                <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-                  {editProductDetailsError.quantityError ? editProductDetailsError.quantityError : ' '}</p>
+                <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+                  {editProductDetailsError.quantityError ? editProductDetailsError.quantityError : ' '}</FormHelperText>
 
                 <p className={styles.labeles}>Price</p>
                 <TextField
@@ -400,14 +400,14 @@ const ProductTable: React.FC = () => {
                   onChange={(e) => setNewPrice(e.target.value)}
                   className={`${styles.textField} ${styles.inputBaseRoot}`}
                 />
-                <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-                  {editProductDetailsError.priceError ? editProductDetailsError.priceError : " "}</p>
+                <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+                  {editProductDetailsError.priceError ? editProductDetailsError.priceError : " "}</FormHelperText>
               </div>
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseEditDialog} color="primary" className={`${styles.button} ${styles.cancelButton}`}><Typography textTransform={'none'}>Cancel</Typography></Button>
-            <Button onClick={handleEditSubmit} color="primary" className={`${styles.button} ${styles.updateButton}`} disabled={loading}><Typography textTransform={'none'}>Update</Typography></Button>
+            <Button onClick={handleCloseEditDialog} color="primary"className="mainButton"><Typography textTransform={'none'}>Cancel</Typography></Button>
+            <Button onClick={handleEditSubmit} color="primary" className="mainButton" disabled={loading}><Typography textTransform={'none'}>Update</Typography></Button>
           </DialogActions>
         </Dialog>
 
@@ -434,7 +434,7 @@ const ProductTable: React.FC = () => {
                 <MenuItem value="Headphone">HeadPhone</MenuItem>
                 <MenuItem value="Mobile">Mobile</MenuItem>
               </Select>
-           <p  style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.productnameAddError ? ProductDetailsAddError.productnameAddError : ' '}</p>
+           <FormHelperText  style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.productnameAddError ? ProductDetailsAddError.productnameAddError : ' '}</FormHelperText>
               <p className={styles.addlabels}>Quantity</p>
               <TextField
                 size="small"
@@ -443,7 +443,7 @@ const ProductTable: React.FC = () => {
                 onChange={(e) => handleInputChange('quantity', e.target.value)}
                 className={`${styles.textField} ${styles.inputBaseRoot}`}
               />
-               <p  style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.quantityAddError ? ProductDetailsAddError.quantityAddError : ' '}</p>
+               <FormHelperText  style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.quantityAddError ? ProductDetailsAddError.quantityAddError : ' '}</FormHelperText>
               <p  className={styles.addlabels}>Price</p>
               <TextField
                 size="small"
@@ -452,12 +452,12 @@ const ProductTable: React.FC = () => {
                 onChange={(e) => handleInputChange('price', e.target.value)}
                 className={`${styles.textField} ${styles.inputBaseRoot}`}
               />
-               <p  style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.priceAddError? ProductDetailsAddError.priceAddError: ' '}</p>
+               <FormHelperText  style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.priceAddError? ProductDetailsAddError.priceAddError: ' '}</FormHelperText>
             </div>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseAddProductDialog} color="primary" className={`${styles.button} ${styles.cancelButton}`}><Typography textTransform={'none'}>Cancel</Typography></Button>
-            <Button onClick={handleAddProductSubmit} color="primary" className={` ${styles.addvalueButton}`} disabled={loading}><Typography textTransform={'none'}>Add</Typography></Button>
+            <Button onClick={handleCloseAddProductDialog} color="primary" className="mainButton"><Typography textTransform={'none'}>Cancel</Typography></Button>
+            <Button onClick={handleAddProductSubmit} color="primary" className='mainButton' disabled={loading}><Typography textTransform={'none'}>Add</Typography></Button>
           </DialogActions>
         </Dialog>
 

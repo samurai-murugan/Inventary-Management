@@ -19,7 +19,7 @@ function HomePage() {
   const handleDrawerToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
-
+   
   const handleUserAddClick = () => {
     setProductPage(false);
     setOrderPage(false);

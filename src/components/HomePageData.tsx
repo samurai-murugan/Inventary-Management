@@ -4,8 +4,8 @@ import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import PieChart from './PieChart';
 import BarChart from './BarChart';
-import imageDetails from '../utils/imageDetails'; // Import the image details file
-import ProductCard from './CardComponent'; // Import the new ProductCard component
+import imageDetails from '../utils/imageDetails';
+import ProductCard from './CardComponent';
 
 interface Product {
   orderid: string;
@@ -16,13 +16,25 @@ interface Product {
 }
 
 const HomePageData: React.FC = () => {
-  const [productDetails, setProductDetails] = useState<Product[]>([]);
-
+  const [productDetails, setProductDetails] = useState<Product[]>([]);  
+  let loginperson = localStorage.getItem('userRole')
+  const userid = localStorage.getItem('userId')
+  console.log(loginperson,'Login Person ====>')
+  console.log(userid,'userid Person ====>')
+  
   useEffect(() => {
     const fetchProductData = async () => {
+      let response:any;
       try {
-        // const response = await fetch('http://localhost:5000/productsData/cardsData');
-        const response = await fetch('http://localhost:5000/productsData/adminpageCardData');
+
+        if(loginperson ==="admin"){
+          console.log('Adming =====> fetching the data' )
+          response = await fetch(`http://localhost:5000/productsData/adminpageCardData`);
+        }else {
+          console.log('user =====> userFetching the data' )
+          response = await fetch(`http://localhost:5000/productsData/userData/${userid}`);
+
+        }
         const data: Product[] = await response.json();
         setProductDetails(data);
       } catch (error) {
@@ -55,6 +67,7 @@ const HomePageData: React.FC = () => {
           cursor: 'pointer',
         } }}>
               <CardContent>
+                <Typography sx={{fontWeight:'bold'}}>Product Price Details</Typography>
                 <PieChart />
               </CardContent>
             </Card>
@@ -66,6 +79,7 @@ const HomePageData: React.FC = () => {
           cursor: 'pointer',
         } }}>
               <CardContent>
+              <Typography sx={{fontWeight:'bold'}}>Product Quantity Details</Typography>
                 <BarChart />
               </CardContent>
             </Card>

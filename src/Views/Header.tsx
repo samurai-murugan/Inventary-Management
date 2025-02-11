@@ -41,7 +41,9 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
     localStorage.removeItem('userName');
   
     sessionStorage.clear();
+    
 
+    // window.location.reload();
     navigate('/', { replace: true });
   };
 

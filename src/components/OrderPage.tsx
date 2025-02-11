@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Select, MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, FormLabel, TextField, Box } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Select, MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, FormLabel, TextField, Box, FormHelperText } from '@mui/material';
 import { IoAddCircleOutline, IoEyeOutline } from "react-icons/io5";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { MdModeEditOutline } from "react-icons/md";
@@ -13,6 +13,10 @@ import {
   type MRT_ColumnDef,
 } from 'material-react-table';
 import { data } from 'react-router-dom';
+import HomePageData from './HomePageData';
+import OrderPageCartCard from './OrderPageCartCard';
+
+
 
 const OrderTable: React.FC = () => {
   const [open, setOpen] = React.useState(false);
@@ -28,6 +32,8 @@ const OrderTable: React.FC = () => {
   const [addOrderOpen, setAddOrderOpen] = React.useState(false);
   const userId = localStorage.getItem('userId');
 
+  let loginperson = localStorage.getItem('userRole')
+  const userid = localStorage.getItem('userId')
   const [addOrderError, setAddorderError] = React.useState<addOrderError>( 
     {productError:'',
     quantityError:'',
@@ -41,9 +47,17 @@ const OrderTable: React.FC = () => {
     addressAddError:''
 })
 
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/orders/allorders');
+const fetchOrders = async () => {
+  try {
+      let response;
+      if(loginperson ==='admin'){
+       console.log("adminOrder====>"  )
+         response = await axios.get('http://localhost:5000/orders/allorders');
+      }
+      else {
+        response = await axios.get(`http://localhost:5000/orders/allUserOrders/${userid}`);
+      }
+
       console.log(response.data.orders)
       setRows(response.data.orders);
       // console.log(response.data.orders.orderid)
@@ -368,10 +382,17 @@ const OrderTable: React.FC = () => {
 
   return (
     <>
-      <div className={styles.addButtontop}>
-        <h1 className={styles.heading}>Order Details</h1>
 
-       
+        <h1 className={styles.heading}>Order Details</h1>
+        {/* <HomePageData></HomePageData> */}
+        {
+          loginperson==='user' &&
+        <OrderPageCartCard rows={rows}/>
+        }
+     
+      <div className={styles.addButtontop}>
+
+        
 
             <div style={{ marginLeft: '20px', marginRight: '20px' }}>
                <MaterialReactTable table={table} />
@@ -400,9 +421,9 @@ const OrderTable: React.FC = () => {
               <MenuItem value="Headphone">HeadPhone</MenuItem>
               <MenuItem value="Mobile">Mobile</MenuItem>
             </Select>
-            <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-                  {addingOrderError.productAddError ? addingOrderError.productAddError: ' '}</p>
-            <p className={styles.adrresLabels}>Quantity</p>
+            <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+                  {addingOrderError.productAddError ? addingOrderError.productAddError: ' '}</FormHelperText>
+            <p className={styles.labeles}>Quantity</p>
             <TextField
               size="small"
               value={newQuantity}
@@ -411,8 +432,8 @@ const OrderTable: React.FC = () => {
               type="number"
               className={`${styles.textField} ${styles.inputBaseRoot}`}
             />
-            <p style={{ marginTop: "-6px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-                  {addingOrderError.quantityAddError ? addingOrderError.quantityAddError: ' '}</p>
+            <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+                  {addingOrderError.quantityAddError ? addingOrderError.quantityAddError: ' '}</FormHelperText>
             
             <p className={styles.labeles}>Payment Method</p>
           
@@ -462,10 +483,10 @@ const OrderTable: React.FC = () => {
                   </RadioGroup>
                 </FormControl>
 
-            <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-            {addingOrderError.paymenentmethodAddError ? addingOrderError.paymenentmethodAddError: ' '}</p>
+            <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+            {addingOrderError.paymenentmethodAddError ? addingOrderError.paymenentmethodAddError: ' '}</FormHelperText>
 
-            <p className={styles.adrresLabels}>Address</p>
+            <p className={styles.labeles}>Address</p>
             <TextField
               size="small"
               value={newAddress}
@@ -473,16 +494,16 @@ const OrderTable: React.FC = () => {
               margin="normal"
               className={`${styles.textField} ${styles.inputBaseRoot}`}
             />
-              <p style={{ marginTop: "-6px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-            {addingOrderError.addressAddError ? addingOrderError.addressAddError: ' '}</p>
+              <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+            {addingOrderError.addressAddError ? addingOrderError.addressAddError: ' '}</FormHelperText>
 
          </div>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseAddOrderDialog} color="secondary" className={`${styles.button} ${styles.cancelButton}`} >
+            <Button onClick={handleCloseAddOrderDialog} color="secondary"  className='mainButton' >
             <Typography textTransform={'none'}>Cancel</Typography>   
             </Button>
-            <Button onClick={handleAddOrderSubmit } color="primary" className={`${styles.button} ${styles.addvalueButton}`}>
+            <Button onClick={handleAddOrderSubmit } color="primary"  className='mainButton'>
            <Typography textTransform={'none'}>{loading ? 'Adding...' : 'Add'}</Typography>   
             </Button>
           </DialogActions>
@@ -503,7 +524,7 @@ const OrderTable: React.FC = () => {
             <Typography variant="body1"><strong>Address:</strong> {selectedOrder?.address}</Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="secondary"  className={`${styles.button} ${styles.cancelButton}`}>
+            <Button onClick={handleClose} color="secondary"   className='mainButton'>
              <Typography textTransform={'none'}>Close</Typography>
             </Button>
           </DialogActions>
@@ -530,10 +551,10 @@ const OrderTable: React.FC = () => {
               <MenuItem value="Headphone">HeadPhone</MenuItem>
               <MenuItem value="Mobile">Mobile</MenuItem>
             </Select>
-            <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-            {addOrderError.productError ? addOrderError.productError: ' '}</p>
+            <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+            {addOrderError.productError ? addOrderError.productError: ' '}</FormHelperText>
 
-            <p className={styles.adrresLabels}>Quantity</p>
+            <p className={styles.labeles}>Quantity</p>
             <TextField
               size="small"
               value={newQuantity}
@@ -542,8 +563,8 @@ const OrderTable: React.FC = () => {
               type="number"
               className={`${styles.textField} ${styles.inputBaseRoot}`}
             />
-              <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-              {addOrderError.quantityError ? addOrderError.quantityError: ' '}</p>
+              <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+              {addOrderError.quantityError ? addOrderError.quantityError: ' '}</FormHelperText>
             <p className={styles.labeles}>Payment Method</p>
             <FormControl className={`${styles.radios} ${styles.inputBaseRoot}`}>
               <RadioGroup
@@ -574,10 +595,10 @@ const OrderTable: React.FC = () => {
       }} />
               </RadioGroup>
             </FormControl>
-            <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+            <p style={{ margin:"0px", marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
             {addOrderError.paymenentmethodError ? addOrderError.paymenentmethodError: ' '}</p>
 
-            <p className={styles.adrresLabels}>Address</p>
+            <p className={styles.labeles}>Address</p>
             <TextField
               size="small"
               value={newAddress}
@@ -585,14 +606,14 @@ const OrderTable: React.FC = () => {
               margin="normal"
               className={`${styles.textField} ${styles.inputBaseRoot}`}
             />
-               <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
-               {addOrderError.addressError ? addOrderError.addressError: ' '}</p>
+               <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+               {addOrderError.addressError ? addOrderError.addressError: ' '}</FormHelperText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseEditDialog} color="secondary" className={`${styles.cancelButton} `}>
+            <Button onClick={handleCloseEditDialog}   className='mainButton' >
             <Typography textTransform={'none'}>Cancel</Typography>
             </Button>
-            <Button onClick={handleEditSubmit} color="primary" className={`${styles.button} ${styles.updateButton}`}  >
+            <Button onClick={handleEditSubmit} color="primary" className='mainButton'  >
              <Typography textTransform={'none'}> Update</Typography> 
             </Button>
           </DialogActions>

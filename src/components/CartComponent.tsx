@@ -2,10 +2,10 @@ import React from 'react';
 import { Card, CardContent, Typography, CardMedia } from '@mui/material';
 
 interface Product {
-  orderid: string;
-  product: string;
-  totalprice: string;
-  totalquantity: string;
+  productid: string;
+  productname: string;
+  price: string;
+  quantity: string;
 }
 
 interface ProductCardProps {
@@ -13,7 +13,7 @@ interface ProductCardProps {
   imageUrl: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, imageUrl }) => {
+const ProductCardForOrderPage: React.FC<ProductCardProps> = ({ product, imageUrl }) => {
   return (
     <Card
       sx={{
@@ -33,9 +33,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, imageUrl }) => {
       <div style={{ width: '150px', overflow: 'hidden', height: '150px',paddingLeft:"30px",marginLeft:'20px' }}> {/* Reduced size */}
         <CardMedia
           component="img"
-          alt={product.product}
+          alt={product.productname}
           image={imageUrl}
-          title={product.product}
+          title={product.productname}
           onError={(e) => {
             e.currentTarget.src = '/images/default-image.jpg'; // Fallback if image fails to load
           }}
@@ -56,14 +56,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, imageUrl }) => {
           flexGrow: 1,
         }}
       >
-        <Typography variant="body1" sx={{fontWeight:'bold', textAlign:"center", marginTop:"-20px", marginBottom:"10px"}}>{product.product}</Typography>
-        <Typography variant="body2" sx={{marginLeft:"10px"}}><strong>Total Orders:</strong> {product.totalquantity}</Typography>
+        <Typography variant="body1" sx={{fontWeight:'bold', textAlign:"center", marginTop:"-20px", marginBottom:"10px"}}>{product.productname}</Typography>
+        <Typography variant="body2" sx={{marginLeft:"10px" }}><strong>Total Quantity: </strong>{product.quantity}</Typography>
         <Typography variant="body2" sx={{ marginTop: 1,marginLeft:"10px" }}>
-          <strong>Total Price:</strong> {product.totalprice}
+        <strong> Price        :</strong>  {product.price}
         </Typography>
       </CardContent>
     </Card>
   );
 };
 
-export default ProductCard;
+export default ProductCardForOrderPage;
