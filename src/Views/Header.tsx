@@ -4,7 +4,10 @@ import { blue } from '@mui/material/colors';
 import { IoIosSettings } from "react-icons/io";
 import { FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom'; 
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styles from "./Header.module.css"; 
+
 
 interface HeaderProps {
   open: boolean;
@@ -42,9 +45,19 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
   
     sessionStorage.clear();
     
-
+          toast.success("Logut successful!", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            });
     // window.location.reload();
-    navigate('/', { replace: true });
+    setTimeout(()=>{
+
+      navigate('/', { replace: true });
+    },2000)
   };
 
   return (
@@ -58,6 +71,7 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
         boxShadow: "none"
       }}
     >
+      <ToastContainer></ToastContainer>
       <Toolbar sx={{ paddingLeft: "0px", boxShadow: "none" }}>
         <Typography
           variant="h6"

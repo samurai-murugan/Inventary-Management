@@ -151,7 +151,7 @@ const RightSide = () => {
         </Typography>
         <Stack direction={"column"} spacing={2} width={"80%"}>
           <p className={styles.inputLabels}>
-            firstname<span className={styles.requiredAsterisk}> *</span>
+            Firstname<span className={styles.requiredAsterisk}> *</span>
           </p>
           <TextField
             id="outlined-basic"
@@ -170,7 +170,7 @@ const RightSide = () => {
           </p>
 
           <p className={styles.inputLabels}>
-            lastname<span className={styles.requiredAsterisk}> *</span>
+            Lastname<span className={styles.requiredAsterisk}> *</span>
           </p>
           <TextField
             id="outlined-basic"

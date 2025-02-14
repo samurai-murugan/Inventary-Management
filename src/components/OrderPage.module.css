@@ -55,10 +55,11 @@
     padding: 20px;
   }
   
-  .dialogTitle {
+  /* .dialogTitle {
     font-size: 18px;
     font-weight: 600;
-  }
+    color:rgb(30, 78, 155) ;
+  } */
   
   /* Paragraph Container for Dialog */
   .paragrap {
@@ -130,12 +131,12 @@
     min-width: 500px;
   }
   
-  .dialogTitle {
+  /* .dialogTitle {
     width: 500px;
     font-weight: bold;
     font-size: 1.25rem;
-    color: #1976d2;
-  }
+    color:rgb(30, 78, 155) !important;
+  } */
   
   .paragrap p {
     padding-bottom: -15px !important;

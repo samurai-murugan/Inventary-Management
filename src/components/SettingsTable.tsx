@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText, IconButton, TextField, Typography } from '@mui/material';
 import { IoEyeOutline } from "react-icons/io5";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { VscVerified } from "react-icons/vsc";
@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { edituserDetailError } from '../Interface/Login.interface';
 import styles from './SettingsTable.module.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 const SettingsTable: React.FC = () => {
   const [open, setOpen] = React.useState(false);
@@ -98,20 +99,20 @@ const SettingsTable: React.FC = () => {
       header: 'Actions',
       Cell: ({ row }: any) => (
         <Box>
-          <IconButton onClick={() => handleView(row.original)}>
+          <IconButton onClick={() => handleView(row.original)} sx={{ color: 'green' }}>
             <IoEyeOutline />
           </IconButton>
           {row.original.is_verified && (
-            <IconButton onClick={() => handleEditDialogOpen(row.original)}>
+            <IconButton onClick={() => handleEditDialogOpen(row.original)} sx={{ color: 'skyblue' }}>
               <MdModeEditOutline />
             </IconButton>
           )}
           {!row.original.is_verified && (
-            <IconButton onClick={() => handleAccept(row.original.id)}>
+            <IconButton onClick={() => handleAccept(row.original.id)}  sx={{ color: '#eb7777' }}>
               <VscVerified />
             </IconButton>
           )}
-          <IconButton onClick={() => handleDeleteDialogOpen(row.original)}>
+          <IconButton onClick={() => handleDeleteDialogOpen(row.original)} className='deleteIcon' sx={{ color: '#eb7777' }}>
             <RiDeleteBin7Line />
           </IconButton>
         </Box>
@@ -144,7 +145,19 @@ const SettingsTable: React.FC = () => {
     if (selectedUser) {
       try {
         setLoading(true);
-        await axios.delete(`http://localhost:5000/users/users/${selectedUser.id}`);
+      const response=  await axios.delete(`http://localhost:5000/users/users/${selectedUser.id}`);
+
+         if(response.status ===200){
+                  toast.success(response.data.message, {
+                    position: "top-right",
+                    autoClose: 1000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                  });
+               
+                }
         setRows((prevRows) => prevRows.filter((row) => row.id !== selectedUser.id)); // Update rows after deletion
         setDeleteOpen(false);
         setLoading(false);
@@ -160,6 +173,17 @@ const SettingsTable: React.FC = () => {
     try {
       const response = await axios.put(`http://localhost:5000/users/users/verify/${id}`, { isVerified: true });
       if (response.status === 200) {
+        console.log("verify  toasting",)
+          toast.success("user Verified", {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+       
+          
         setRows((prevRows) =>
           prevRows.map((row) =>
             row.id === id ? { ...row, is_verified: true } : row
@@ -216,10 +240,22 @@ const SettingsTable: React.FC = () => {
     if (isValid) {
       try {
         setLoading(true);
-        await axios.put(`http://localhost:5000/users/users/updateUser/${selectedUser.id}`, {
+     const response =  await axios.put(`http://localhost:5000/users/users/updateUser/${selectedUser.id}`, {
           firstname: newFirstName,
           lastname: newLastName,
         });
+        if (response.status === 200) {
+        
+            toast.success("user updated successfully", {
+              position: "top-right",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            });
+          }
+
         setRows((prevRows) =>
           prevRows.map((row) =>
             row.id === selectedUser.id
@@ -253,8 +289,9 @@ const SettingsTable: React.FC = () => {
     muiTableHeadCellProps :{
     sx : {
       border : '1px solid gray',
-      backgroundColor:'rgb(156, 156, 233);'
+      backgroundColor: 'rgb(30, 78, 155)',
     }
+    
 
     },
     muiTableBodyCellProps: {
@@ -267,6 +304,7 @@ const SettingsTable: React.FC = () => {
 
   return (
     <>
+    <ToastContainer/>
       <h1 className={styles.heading}>User Details</h1>
       <div style={{ marginLeft: '20px', marginRight: '20px' }}>
         <MaterialReactTable table={tabel} />
@@ -275,7 +313,7 @@ const SettingsTable: React.FC = () => {
       {/* View user data dialog */}
       <Dialog open={open} onClose={handleClose} className={styles.dialog}>
         <Box className={styles.closearrow}>
-          <DialogTitle className={styles.dialogTitle}>User Details</DialogTitle>
+          <DialogTitle className='dialogTitle'>User Details</DialogTitle>
           <IconButton onClick={handleClose}>
             <CloseIcon />
           </IconButton>
@@ -291,7 +329,7 @@ const SettingsTable: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary" className={`${styles.button} ${styles.cancelButton}`}>
+          <Button onClick={handleClose} color="primary" className="mainButton">
             <Typography textTransform={'none'}>Close</Typography>
           </Button>
         </DialogActions>
@@ -313,10 +351,10 @@ const SettingsTable: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} color="primary" className={`${styles.button} ${styles.cancelButton}`}>
+          <Button onClick={handleCloseDeleteDialog} color="primary" className="mainButton">
             <Typography textTransform={'none'}>Cancel</Typography>
           </Button>
-          <Button onClick={handleDelete} color="secondary" className={`${styles.button} ${styles.deleteButton}`} disabled={loading}>
+          <Button onClick={handleDelete} color="secondary" className="mainButton" disabled={loading}>
             <Typography textTransform={'none'}>Delete</Typography>
           </Button>
         </DialogActions>
@@ -335,9 +373,9 @@ const SettingsTable: React.FC = () => {
             <div className={styles.paragrap}>
               <p className={styles.labeles}>Email</p>
               <TextField size="small" value={selectedUser.email_id} disabled className={styles.textField} />
-              <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+              <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                 {edituserdetailsError.firstnameError ? " " : " "}
-              </p>
+              </FormHelperText>
 
               <p className={styles.labeles}>FirstName</p>
               <TextField
@@ -346,9 +384,9 @@ const SettingsTable: React.FC = () => {
                 onChange={(e) => setNewFirstName(e.target.value)}
                 className={`${styles.textField} ${styles.inputBaseRoot}`}
               />
-              <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+              <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                 {edituserdetailsError.firstnameError ? edituserdetailsError.firstnameError : " "}
-              </p>
+              </FormHelperText>
               <p className={styles.labeles}>LastName</p>
               <TextField
                 size="small"
@@ -356,17 +394,17 @@ const SettingsTable: React.FC = () => {
                 onChange={(e) => setNewLastName(e.target.value)}
                 className={`${styles.textField} ${styles.inputBaseRoot}`}
               />
-              <p style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+              <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                 {edituserdetailsError.lastnameError ? edituserdetailsError.lastnameError : " "}
-              </p>
+              </FormHelperText>
             </div>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseEditDialog} color="primary" className={`${styles.button} ${styles.cancelButton}`}>
+          <Button onClick={handleCloseEditDialog} color="primary" className="mainButton">
             <Typography textTransform={'none'}>Cancel</Typography>
           </Button>
-          <Button onClick={handleEditSubmit} color="secondary" className={`${styles.button} ${styles.updateButton}`} disabled={loading}>
+          <Button onClick={handleEditSubmit} color="secondary" className="mainButton" disabled={loading}>
             <Typography textTransform={'none'}>Update</Typography>
           </Button>
         </DialogActions>

@@ -57,27 +57,29 @@
   }
   
  .paragrap p{
-    padding-bottom: -15px !important;
-    font-size: 12px;
+    /* padding-bottom: -15px !important; */
+    font-size: 11px;
 
  }
 
  .paragrap .labeles{
-  margin-bottom: 9px;
+  /* margin-bottom: 0px;   */
+  margin: 0px;
  }
   .paragrap p div{
     width: 500px;
   }
   .textField {
-    margin-top: -12px;
-    margin-bottom: 12px;
+    /* margin-top: -12px; */
+    /* margin-bottom: 12px; */
 
     width: 100%;
   }
   .inputBaseRoot {
     background-color: #f0f0f0;
     border-radius: 5px; 
-   width: 500px;
+   width: 510px;
+   font-size: 12px !important;
   }
  
   .button {

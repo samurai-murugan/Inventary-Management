@@ -16,12 +16,23 @@ code {
 
 .mainButton{
   color:white !important;
-  background-color: #1976d2 !important;
+  background-color: rgb(20, 51, 100) !important;
+  /* color: rgba(0, 0, 0, 0.87); */
   /* font-size: 0.9rem !important ; */
 }
 .mainButton p{
   font-size: 0.9rem !important ;
 }
 .mainButton:hover{
-  background-color: #398cdf !important;
+  background-color:rgb(30, 78, 155) !important;
 }
+
+.dialogTitle {
+  width: 500px !important;
+  font-weight: bold;
+  font-size: 1.25rem;
+  color:rgb(30, 78, 155) !important;
+  font-size: 18px;
+  font-weight: 600;
+}
+

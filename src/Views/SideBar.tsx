@@ -56,20 +56,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
-    backgroundColor: 'rgb(156, 156, 233)',
+    backgroundColor: 'rgb(10, 24, 47)',
     ...(open
       ? {
           ...openedMixin(theme),
           '& .MuiDrawer-paper': {
             ...openedMixin(theme),
-            backgroundColor: 'rgb(156, 156, 233)',
+            backgroundColor: 'rgb(10, 24, 47)',
           },
         }
       : {
           ...closedMixin(theme),
           '& .MuiDrawer-paper': {
             ...closedMixin(theme),
-            backgroundColor: 'rgb(156, 156, 233)',
+            backgroundColor: 'rgb(10, 24, 47)',
           },
         }),
   })
@@ -112,9 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [open, onToggle]);
 
   React.useEffect(() => {
-   
-    const user = localStorage.getItem('userRole'); 
-    console.log(user,"user")
+    const user = localStorage.getItem('userRole'); // Assuming user info is stored as a JSON string
     if (user === 'user') {
       setIsLoggedIn(true);
     }
@@ -134,9 +132,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <Drawer variant="permanent" open={open} ref={sidebarRef}>
       <DrawerHeader>
-        <IconButton color="inherit" aria-label="open drawer" onClick={onToggle} edge="start" sx={{ marginLeft: 0.5 }}>
-          {open ? <ChevronLeftIcon /> : <MenuIcon />}
-        </IconButton>
+        <IconButton color="inherit" aria-label="open drawer" onClick={onToggle} edge="start" sx={{ marginLeft: 0.5, color: "#53698c" }}>
+          {open ? <ChevronLeftIcon sx={{ color: "white" }} /> : <MenuIcon sx={{color:'white'}} />}
+       </IconButton>
       </DrawerHeader>
 
       <List>
@@ -147,7 +145,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                 sx={[
                   { minHeight: 48, px: 2.5 },
                   open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
-                  activeIndex === index ? { backgroundColor: 'rgba(0, 0, 0, 0.08)' } : {},
+                  activeIndex === index ? { backgroundColor: '#53698c' } : {},
+                  {
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)', // Button hover color
+                    },
+                  },
                 ]}
                 onClick={() => handleItemClick(index, text)}
               >
@@ -155,16 +158,22 @@ const Sidebar: React.FC<SidebarProps> = ({
                   sx={[
                     { minWidth: 0, justifyContent: 'center', fontSize: 'large' },
                     open ? { mr: 3 } : { mr: 'auto' },
+                    { color: 'white' },
+                    {
+                      '&:hover': {
+                        color: 'white', // Icon remains white on hover
+                      },
+                    },
                   ]}
                 >
                   {icons[index]}
                 </ListItemIcon>
-                {open && <ListItemText primary={text} />}
+                {open && <ListItemText primary={text} sx={{ color: 'white' }} />}
               </ListItemButton>
             </ListItem>
           </Tooltip>
         ))}
-        
+
         {/* Conditionally render the Products menu item if user is not logged in */}
         {!isLoggedIn && (
           <Tooltip key="Products" title="Products" arrow placement="right-start">
@@ -173,7 +182,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                 sx={[
                   { minHeight: 48, px: 2.5 },
                   open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
-                  activeIndex === 2 ? { backgroundColor: 'rgba(0, 0, 0, 0.08)' } : {},
+                  activeIndex === 2 ? { backgroundColor: '#53698c' } : {},
+                  {
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)', // Button hover color
+                    },
+                  },
                 ]}
                 onClick={() => handleItemClick(2, 'Products')}
               >
@@ -181,11 +195,17 @@ const Sidebar: React.FC<SidebarProps> = ({
                   sx={[
                     { minWidth: 0, justifyContent: 'center', fontSize: 'large' },
                     open ? { mr: 3 } : { mr: 'auto' },
+                    { color: 'white' },
+                    {
+                      '&:hover': {
+                        color: 'white', // Icon remains white on hover
+                      },
+                    },
                   ]}
                 >
                   {icons[2]}
                 </ListItemIcon>
-                {open && <ListItemText primary="Products" />}
+                {open && <ListItemText primary="Products" sx={{ color: 'white' }} />}
               </ListItemButton>
             </ListItem>
           </Tooltip>

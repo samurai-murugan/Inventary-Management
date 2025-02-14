@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Select, MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, FormLabel, TextField, Box, FormHelperText } from '@mui/material';
+import { IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Select, MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, TextField, Box, FormHelperText } from '@mui/material';
 import { IoAddCircleOutline, IoEyeOutline } from "react-icons/io5";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { MdModeEditOutline } from "react-icons/md";
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import styles from './OrderPage.module.css';
 import CloseIcon from '@mui/icons-material/Close';
 import { addingOrderError, addOrderError } from '../Interface/Login.interface';
@@ -12,10 +12,10 @@ import {
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from 'material-react-table';
-import { data } from 'react-router-dom';
-import HomePageData from './HomePageData';
-import OrderPageCartCard from './OrderPageCartCard';
 
+import OrderPageCartCard from './OrderPageCartCard';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const OrderTable: React.FC = () => {
@@ -113,7 +113,18 @@ const fetchOrders = async () => {
     if (selectedOrder) {
       try {
         setLoading(true);
-        await axios.delete(`http://localhost:5000/orders/deleteorder/${selectedOrder.orderid}`);
+    const response = await axios.delete(`http://localhost:5000/orders/deleteorder/${selectedOrder.orderid}`);
+
+        if(response.status === 200){
+          toast.success(response.data.message,{
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          })
+        }
         setRows((prevRows) => prevRows.filter((row) => row.id !== selectedOrder.id));
         fetchOrders();
         setDeleteOpen(false);
@@ -175,12 +186,22 @@ const fetchOrders = async () => {
         setLoading(true);
 
         console.log("update datra", newProduct, newQuantity, newPaymentMethod, newAddress)
-        await axios.put(`http://localhost:5000/orders/updateOrder/${selectedOrder.orderid}`, {
+       const response= await axios.put(`http://localhost:5000/orders/updateOrder/${selectedOrder.orderid}`, {
           product: newProduct,
           quantity: Number(newQuantity),
           paymentMethod: newPaymentMethod,
           address: newAddress,
         });
+        if(response.status === 200){
+          toast.success('Order update successfuly',{
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          })
+        }
         setRows((prevRows) =>
           prevRows.map((row) =>
             row.id === selectedOrder.id
@@ -276,7 +297,21 @@ const fetchOrders = async () => {
           paymentMethod: newPaymentMethod,
           address: newAddress,
         });
-
+    console.log(response.status,"Status for Add order")
+    if(response.status ===201){
+      toast.success("Order successful!", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+    
+      
+   
+    
         console.log(response.data.orders)
         setAddOrderOpen(false);
         setLoading(false);
@@ -294,60 +329,178 @@ const fetchOrders = async () => {
 
         fetchOrders();
       } catch (error) {
+        if(error instanceof AxiosError){
+          if(error.response?.status === 400){
+
+            toast.error("Order already exist!", {
+              position: "top-right",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              style: {
+                backgroundColor: "white", 
+                color: "crimson", 
+              }
+            });
+          }else if(error.response?.status === 404){
+            toast.success("Product not availabel!", {
+              position: "top-right",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            })
+          }
+          else if(error.response?.status === 405){
+            toast.error("please select lessthan stock item!", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            })
+          }
+        }
         console.error('Error adding order:', error);
         setLoading(false);
+      }
+      finally{
+        setAddOrderOpen(false);
+        setLoading(false);
+        setNewProduct('');
+        setNewQuantity('');
+        setNewPaymentMethod('');
+        setNewAddress('');
+        setAddingOrderError({
+          productAddError:'',
+          quantityAddError:'',
+          paymenentmethodAddError:'',
+          addressAddError:''
+        })
+
+
+        fetchOrders();
       }
     }
   };
  
 
-  const columns = React.useMemo<MRT_ColumnDef<any>[]>(() => [
-    {
-      accessorKey: 'product',
-      header: 'Product Name',
-    },
-    {
-      accessorKey: 'quantity',
-      header: 'Quantity',
-      size:150,
-      muiTableBodyCellProps:{
-        align:"right",
+  // const columns = React.useMemo<MRT_ColumnDef<any>[]>(() => [
+    
+   
+  //   {
+  //     accessorKey: 'product',
+  //     header: 'Product Name',
+  //   },
+  //   {
+  //     accessorKey: 'quantity',
+  //     header: 'Quantity',
+  //     size:150,
+  //     muiTableBodyCellProps:{
+  //       align:"right",
 
-      }
-    },
-    {
-      accessorKey: 'price',
-      header: 'Price',
-      size:150,
-      muiTableBodyCellProps:{
-        align:"right",
+  //     }
+  //   },
+  //   {
+  //     accessorKey: 'price',
+  //     header: 'Price',
+  //     size:150,
+  //     muiTableBodyCellProps:{
+  //       align:"right",
 
-      }
-    },
-    {
-      accessorKey: 'address',
-      header: 'Address',
-    },
-    {
-      accessorKey: 'actions',
-      header: 'Actions',
-      Cell: ({ row }) => (
-        <Box>
-          <IconButton onClick={() => handleView(row.original)}>
-            <IoEyeOutline />
-          </IconButton>
-          <IconButton onClick={() => handleEditDialogOpen(row.original)}>
-            <MdModeEditOutline />
-          </IconButton>
-          <IconButton onClick={() => handleDeleteDialogOpen(row.original)}>
-            <RiDeleteBin7Line />
-          </IconButton>
-        </Box>
-      ),
-    },
-  ], []);
+  //     }
+  //   },
+  //   {
+  //     accessorKey: 'address',
+  //     header: 'Address',
+  //   },
+  //   {
+  //     accessorKey: 'actions',
+  //     header: 'Actions',
+  //     Cell: ({ row }) => (
+  //       <Box>
+  //         <IconButton onClick={() => handleView(row.original)} sx={{color:"green"}}>
+  //           <IoEyeOutline />
+  //         </IconButton>
+  //         <IconButton onClick={() => handleEditDialogOpen(row.original)} sx={{color:"skyblue"}}>
+  //           <MdModeEditOutline />
+  //         </IconButton>
+  //         <IconButton onClick={() => handleDeleteDialogOpen(row.original)} sx={{color:"#eb7777"}}>
+  //           <RiDeleteBin7Line />
+  //         </IconButton>
+  //       </Box>
+  //     ),
+  //   },
+  // ], []);
 
 
+  const columns = React.useMemo<MRT_ColumnDef<any>[]>(() => {
+
+  
+    const baseColumns: MRT_ColumnDef<any>[] = [
+      {
+        accessorKey: 'product',
+        header: 'Product Name',
+      },
+      {
+        accessorKey: 'quantity',
+        header: 'Quantity',
+        size: 150,
+        muiTableBodyCellProps: {
+          align: 'right',
+        },
+      },
+      {
+        accessorKey: 'price',
+        header: 'Price',
+        size: 150,
+        muiTableBodyCellProps: {
+          align: 'right',
+        },
+      },
+      {
+        accessorKey: 'address',
+        header: 'Address',
+      },
+      {
+        accessorKey: 'actions',
+        header: 'Actions',
+        Cell: ({ row }) => (
+          <Box>
+            <IconButton onClick={() => handleView(row.original)} sx={{ color: 'green' }}>
+              <IoEyeOutline />
+            </IconButton>
+            <IconButton onClick={() => handleEditDialogOpen(row.original)} sx={{ color: 'skyblue' }}>
+              <MdModeEditOutline />
+            </IconButton>
+            <IconButton onClick={() => handleDeleteDialogOpen(row.original)} sx={{ color: '#eb7777' }}>
+              <RiDeleteBin7Line />
+            </IconButton>
+          </Box>
+        ),
+      },
+    ];
+
+    if (loginperson === "admin") {
+      baseColumns.splice(1, 0, { 
+        accessorKey: 'username',
+        header: 'Order By',
+        Cell: ({ row }) => (
+          <Box>
+          
+            {row.original.username} 
+          </Box>
+        ),
+      });
+    }
+  
+    return baseColumns;
+  }, []);
+  
 
   const table = useMaterialReactTable({
     columns,
@@ -359,15 +512,16 @@ const fetchOrders = async () => {
       color="primary"
       onClick={handleAddOrderDialogOpen}
       className={styles.handleAddOrderDialogOpen}
+      sx={{backgroundColor:'rgb(30, 78, 155)'}}
     >
-      <IoAddCircleOutline style={{ marginRight: '4px' }} />
+      <IoAddCircleOutline style={{ marginRight: '4px'}} />
       <Typography textTransform={'none'}>Add Order</Typography>
     </Button>
     ),
     muiTableHeadCellProps: {
       sx: {
         border: '1px solid gray',
-        backgroundColor: 'rgb(156, 156, 233)',
+        backgroundColor: 'rgb(30, 78, 155)',
       },
     },
     muiTableBodyCellProps: {
@@ -382,13 +536,12 @@ const fetchOrders = async () => {
 
   return (
     <>
-
+       <ToastContainer></ToastContainer>
         <h1 className={styles.heading}>Order Details</h1>
         {/* <HomePageData></HomePageData> */}
-        {
-          loginperson==='user' &&
+     
         <OrderPageCartCard rows={rows}/>
-        }
+        
      
       <div className={styles.addButtontop}>
 
@@ -401,7 +554,7 @@ const fetchOrders = async () => {
         {/* Add Order Dialog */}
         <Dialog open={addOrderOpen} onClose={handleCloseAddOrderDialog} className={styles.dialog}>
         <Box className={styles.closearrow}>
-          <DialogTitle className={styles.dialogTitle}>Add Order</DialogTitle>
+          <DialogTitle  className='dialogTitle'>Add Order</DialogTitle>
                 <IconButton onClick={handleCloseAddOrderDialog}>
                      <CloseIcon />
                 </IconButton> 
@@ -512,7 +665,7 @@ const fetchOrders = async () => {
         {/* View Order Dialog */}
         <Dialog open={open} onClose={handleClose}>
         <Box className={styles.closearrow}>
-            <DialogTitle className={styles.dialogTitle}>Order Details</DialogTitle>
+            <DialogTitle  className='dialogTitle'>Order Details</DialogTitle>
                 <IconButton onClick={handleClose}>
                      <CloseIcon />
                 </IconButton> 
@@ -533,7 +686,7 @@ const fetchOrders = async () => {
         {/* Edit Order Dialog */}
         <Dialog open={editOpen} onClose={handleCloseEditDialog}>
         <Box className={styles.closearrow}>
-            <DialogTitle className={styles.dialogTitle}>Edit Product</DialogTitle>
+            <DialogTitle className='dialogTitle'>Edit Product</DialogTitle>
                 <IconButton onClick={handleCloseEditDialog}>
                      <CloseIcon />
                 </IconButton> 
@@ -622,7 +775,7 @@ const fetchOrders = async () => {
         {/* Delete Order Dialog */}
         <Dialog open={deleteOpen} onClose={handleCloseDeleteDialog}>
         <Box className={styles.closearrow}>
-            <DialogTitle className={styles.dialogTitle}>Delete Order</DialogTitle>
+            <DialogTitle className='dialogTitle'>Delete Order</DialogTitle>
                 <IconButton onClick={handleCloseDeleteDialog}>
                      <CloseIcon />
                 </IconButton> 
@@ -631,10 +784,10 @@ const fetchOrders = async () => {
             <Typography variant="body1">Are you sure you want to delete this order?</Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDeleteDialog} color="secondary" className={`${styles.button} ${styles.cancelButton}`}>
+            <Button onClick={handleCloseDeleteDialog} color="secondary" className='mainButton'>
               <Typography textTransform={'none'}>Cancel</Typography>
             </Button>
-            <Button onClick={handleDelete} color="primary" className={`${styles.button} ${styles.deleteButton}`}>
+            <Button onClick={handleDelete} color="primary" className='mainButton' >
               <Typography textTransform={'none'}>Delete</Typography>
             </Button>
           </DialogActions>

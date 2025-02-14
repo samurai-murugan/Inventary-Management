@@ -12,6 +12,7 @@ import {
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from 'material-react-table';
+import { toast, ToastContainer } from 'react-toastify';
 
 
 const ProductTable: React.FC = () => {
@@ -91,7 +92,18 @@ const ProductTable: React.FC = () => {
     if (selectedProduct) {
       try {
         setLoading(true);
-        await axios.delete(`http://localhost:5000/product/deleteProduct/${selectedProduct.id}`);
+       const response= await axios.delete(`http://localhost:5000/product/deleteProduct/${selectedProduct.id}`);
+           if(response.status ===200){
+              toast.success(response.data.message, {
+                position: "top-right",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+           
+            }
         setRows((prevRows) => prevRows.filter((row) => row.id !== selectedProduct.id));
         setDeleteOpen(false);
         setLoading(false);
@@ -140,11 +152,22 @@ const ProductTable: React.FC = () => {
       try {
         console.log(newName, newQuantity, newPrice)
         setLoading(true);
-        await axios.put(`http://localhost:5000/product/updateproduct/${selectedProduct.id}`, {
+      const response= await axios.put(`http://localhost:5000/product/updateproduct/${selectedProduct.id}`, {
           productname: newName,
           quantity: newQuantity,
           price: newPrice,
         });
+        if(response.status ===200){
+          toast.success(response.data.message, {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+       
+        }
         setRows((prevRows) =>
           prevRows.map((row) =>
             row.id === selectedProduct.id
@@ -215,6 +238,17 @@ const ProductTable: React.FC = () => {
           quantity: Number(newProduct.quantity),
           price: Number(newProduct.price),
         });
+        if(response.status ===201){
+          toast.success(response.data.message, {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+       
+        }
         const product = response.data.product
 
         // setRows((prevRows) => [...prevRows, product]);
@@ -242,23 +276,33 @@ const ProductTable: React.FC = () => {
     {
       accessorKey: 'quantity',
       header: 'Quantity',
+      size:130,
+      muiTableBodyCellProps:{
+        align:"right",
+
+      }
     },
     {
       accessorKey: 'price',
       header: 'Price',
+      size:130,
+      muiTableBodyCellProps:{
+        align:"right",
+
+      }
     },
     {
       accessorKey: 'actions',
       header: 'Actions',
       Cell: ({ row }) => (
         <Box>
-          <IconButton onClick={() => handleView(row.original)}>
+          <IconButton onClick={() => handleView(row.original)} sx={{color:'green'}}>
             <IoEyeOutline />
           </IconButton>
-          <IconButton onClick={() => handleEditDialogOpen(row.original)}>
+          <IconButton onClick={() => handleEditDialogOpen(row.original)}  sx={{color:'skyblue'}}> 
             <MdModeEditOutline />
           </IconButton>
-          <IconButton onClick={() => handleDeleteDialogOpen(row.original)}>
+          <IconButton onClick={() => handleDeleteDialogOpen(row.original)}  sx={{color:'#eb7777'}}>
             <RiDeleteBin7Line />
           </IconButton>
         </Box>
@@ -278,6 +322,7 @@ const ProductTable: React.FC = () => {
         color="primary"
         onClick={handleAddProductDialogOpen}
         className={styles.handleAddProductDialogOpen}
+        sx={{backgroundColor:'rgb(30, 78, 155)'}}
       >
         <IoAddCircleOutline style={{ marginRight: '4px' }} />
         <Typography textTransform={'none'}>Add Product</Typography>
@@ -286,7 +331,7 @@ const ProductTable: React.FC = () => {
     muiTableHeadCellProps: {
       sx: {
         border: '1px solid gray',
-        backgroundColor: 'rgb(156, 156, 233)',
+        backgroundColor: 'rgb(30, 78, 155)',
       },
     },
     muiTableBodyCellProps: {
@@ -299,6 +344,8 @@ const ProductTable: React.FC = () => {
   
   return (
     <>
+
+    <ToastContainer/>
       <div className={styles.addButtontop}>
         <h1 className={styles.heading}>Product Details</h1>
 
@@ -310,7 +357,7 @@ const ProductTable: React.FC = () => {
         <Dialog open={open} onClose={handleClose} className={styles.dialog}>
           <Box className={styles.closearrow}>
 
-            <DialogTitle className={styles.dialogTitle}>Product Details</DialogTitle>
+            <DialogTitle className='dialogTitle'>Product Details</DialogTitle>
             <IconButton onClick={handleClose}>
               <CloseIcon />
             </IconButton>
@@ -334,7 +381,7 @@ const ProductTable: React.FC = () => {
         <Dialog open={deleteOpen} onClose={handleCloseDeleteDialog} className={styles.dialog}>
 
         <Box className={styles.closearrow}>
-          <DialogTitle className={styles.dialogTitle}>Delete Confirm</DialogTitle>
+          <DialogTitle  className='dialogTitle'>Delete Confirm</DialogTitle>
            
                 <IconButton onClick={handleCloseDeleteDialog}>
                      <CloseIcon />
@@ -356,7 +403,7 @@ const ProductTable: React.FC = () => {
         {/* Edit Product Dialog */}
         <Dialog open={editOpen} onClose={handleCloseEditDialog} className={styles.dialog}>
           <Box className={styles.closearrow}>
-            <DialogTitle className={styles.dialogTitle}>Edit Product</DialogTitle>
+            <DialogTitle  className='dialogTitle'>Edit Product</DialogTitle>
                 <IconButton onClick={handleCloseEditDialog}>
                      <CloseIcon />
                 </IconButton> 
@@ -414,7 +461,7 @@ const ProductTable: React.FC = () => {
         {/* Add Product Dialog */}
         <Dialog open={addProductOpen} onClose={handleCloseAddProductDialog} className={styles.dialog}>
           <Box className={styles.closearrow}>
-          <DialogTitle className={styles.dialogTitle}>Add Product</DialogTitle>
+          <DialogTitle  className='dialogTitle'>Add Product</DialogTitle>
                 <IconButton onClick={handleCloseAddProductDialog}>
                      <CloseIcon />
                 </IconButton> 

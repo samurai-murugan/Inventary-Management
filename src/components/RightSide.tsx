@@ -8,6 +8,8 @@ import { useState } from "react";
 import { getErrorMsg } from "../data/errorMsg";
 import { UserDetailsError, UserDetailsType } from "../Interface/Login.interface";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 
 const RightSide = () => {
@@ -16,12 +18,11 @@ const RightSide = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (event: any) => {
-    event.preventDefault(); 
+    event.preventDefault();
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     let isValid = true;
 
-   
     setUserDetailsError({ userNameError: '', passwordError: '' });
 
     // Validate email
@@ -48,8 +49,8 @@ const RightSide = () => {
     }
 
     if (!isValid) {
-      console.log("Form not valid");
-      return; 
+      console.log("Form is not valid");
+      return;
     }
 
     try {
@@ -59,24 +60,44 @@ const RightSide = () => {
       });
 
       if (response.status === 200) {
-        const { userName, id, role } = response.data.user; 
-        // console.log()
-        console.log("role : " + response.data.user.role)
+        console.log("Login successful!");
+        
+        // Show success toast
+        toast.success("Login successful!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
 
-        // const userRole = response.data.user.role;
-        // localStorage.setItem("firstname")
-        localStorage.setItem('userName', userName); 
+        const { userName, id, role } = response.data.user;
+        localStorage.setItem('userName', userName);
         localStorage.setItem('userRole', role);
-        localStorage.setItem('userId', id); 
-       
+        localStorage.setItem('userId', id);
 
-        if(role === 'admin'){
-          console.log("admin login successfully");
+        if (role === 'admin') {
+          console.log("Admin logged in successfully");
         }
-        console.log('Login successful:', response.data);
-        navigate('/homepage');
+
+        setTimeout(() => {
+          navigate('/homepage');
+        }, 2000);
+        // navigate('/homepage');
       } else {
         console.log('Login failed:', response.data.message);
+
+        // Show error toast if login fails
+        toast.error("Login failed: " + response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
         if (response.data.message === "User not found") {
           setUserDetailsError((prevState) => ({
             ...prevState,
@@ -85,8 +106,10 @@ const RightSide = () => {
         }
       }
 
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error during login:', error);
+
+      // Handle error during login
       if (error.response) {
         console.error('Backend error message:', error.response.data);
         setUserDetailsError((prevState) => ({
@@ -99,6 +122,16 @@ const RightSide = () => {
           userNameError: 'Network error. Please try again later.',
         }));
       }
+
+      // Show error toast for network error
+      toast.error("An error occurred. Please try again later.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
 
     setUserDetails({ userName: '', password: '' });
@@ -120,6 +153,9 @@ const RightSide = () => {
 
   return (
     <form onSubmit={handleLogin}>
+      {/* Toast Container for showing notifications */}
+      <ToastContainer />
+
       <Box className={styles.RightContainer} sx={{ width: '100%', maxWidth: 500 }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           Login
@@ -140,7 +176,7 @@ const RightSide = () => {
               endAdornment: <InputAdornment position="end"><FaUser /></InputAdornment>,
             }}
           />
-      
+
           <p className={styles.ErrorMessage} style={{ whiteSpace: "preserve", color: "red" }}>
             {userDetailsError.userNameError ? userDetailsError.userNameError : " "}
           </p>
@@ -166,7 +202,7 @@ const RightSide = () => {
           </p>
         </Stack>
         <Typography variant="body2" className={styles.ForgotPassword}>
-          <a href="...">Forgot password?</a>
+          <a href="#">Forgot password?</a>
         </Typography>
 
         <Button
