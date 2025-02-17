@@ -12,7 +12,7 @@ export const Register:FC<{ setLogin: React.Dispatch<React.SetStateAction<boolean
     <Box className="main">
         <Box className='mainContainer'>
           <Box className={styles.loginPageContainer} >
-            <Box className={styles.leftSide}><RegisterLeftSide /></Box>
+            <Box className={styles.leftSide}><RegisterLeftSide   setLogin={setLogin}/></Box>
             <Box className={styles.rightSide}><RegisterRightSide setLogin={setLogin}/></Box>
           </Box>
         </Box>

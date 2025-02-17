@@ -8,6 +8,7 @@ const LeftSide = ({ setLogin }: { setLogin: React.Dispatch<React.SetStateAction<
     setLogin(false); 
   }
 
+  
   return (
     <>
     
@@ -18,7 +19,7 @@ const LeftSide = ({ setLogin }: { setLogin: React.Dispatch<React.SetStateAction<
             <Typography variant="body2" sx={{marginBottom:'20px'}} gutterBottom>
                 Don't have an account?
             </Typography>
-            <Button variant="outlined" size='large' sx={{color: 'white', border: '2px solid white',borderRadius:'10px'}} onClick={handleSwitchToRegister}><Typography style={{ textTransform: 'none', fontWeight:700 }}>Register</Typography></Button>
+            <Button variant="outlined" size='large' sx={{color: 'white', border: '2px solid white',borderRadius:'10px'}} onClick={handleSwitchToRegister}><Typography style={{ textTransform: 'none', fontWeight:700 }}>Sign up</Typography></Button>
             </Box>
    
     

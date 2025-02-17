@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Select, MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, TextField, Box, FormHelperText } from '@mui/material';
+import { IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Select, MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, TextField, Box, FormHelperText, Autocomplete } from '@mui/material';
 import { IoAddCircleOutline, IoEyeOutline } from "react-icons/io5";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { MdModeEditOutline } from "react-icons/md";
@@ -16,21 +16,50 @@ import {
 import OrderPageCartCard from './OrderPageCartCard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+interface ProductPriceDetails{
+  [key: string]: string;  // This allows dynamic string keys to access prices (as strings)
 
+}
 
+// interface PoroductDropDown{
+//   productName:string;
+
+// }
+// Example product prices for the calculation
+// const productPrices = {
+//   Laptop: 1000,
+//   Mouse: 50,
+//   Keyboard: 80,
+//   Headphone: 120,
+//   Mobile: 600,
+// };
+interface Product {
+  productid: string;
+  productname: string;
+  price: string;
+  quantity: string;
+}
 const OrderTable: React.FC = () => {
+
   const [open, setOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
   const [editOpen, setEditOpen] = React.useState(false);
   const [selectedOrder, setSelectedOrder] = React.useState<any>(null);
   const [rows, setRows] = React.useState<any[]>([]);
-  const [newProduct, setNewProduct] = React.useState('');
-  const [newQuantity, setNewQuantity] = React.useState('');
+  const [newProduct, setNewProduct] = React.useState<string>('');
+  const [newQuantity, setNewQuantity] = React.useState<string>('');
   const [newPaymentMethod, setNewPaymentMethod] = React.useState('');
   const [newAddress, setNewAddress] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [addOrderOpen, setAddOrderOpen] = React.useState(false);
+  const [totalPrice, setTotalPrice] = React.useState<number>(0);
+  const [productPrice,setProductPrice]= React.useState<ProductPriceDetails| null>(null)
+  const[productDropDown,setProductDropDown] = React.useState<string[]>([])
   const userId = localStorage.getItem('userId');
+ const [productDetails, setProductDetails] = React.useState<Product[]>([]);
+
+ const [availabelQuantity,setAvailabelQuantity]= React.useState<[]>([])
+  // const [userOrderDetails,setUserOrderDetails]= React.useState<any[]>([])
 
   let loginperson = localStorage.getItem('userRole')
   const userid = localStorage.getItem('userId')
@@ -47,6 +76,59 @@ const OrderTable: React.FC = () => {
     addressAddError:''
 })
 
+
+React.useEffect(() => {
+  const fetchProductPrices = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/product/product-prices');
+
+      console.log('respons',response)
+      if (!response.ok) {
+        throw new Error('Failed to fetch product prices');
+      }
+      const data: ProductPriceDetails = await response.json();
+      setProductPrice(data);
+      setLoading(false);
+    } catch (error: any) {
+     
+      setLoading(false);
+    }
+  };
+
+  fetchProductPrices();
+}, []);
+// for the availabel quantity
+  React.useEffect(() => {
+    const fetchCardDataForCarts = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/productsData/cartData`);
+        const data: Product[] = await response.json();
+        setProductDetails(data);
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    };
+
+    fetchCardDataForCarts();
+  }, [rows]);
+
+
+React.useEffect(()=>{
+  const fetchproducts = async ()=>{
+    try{
+
+      const response = await axios.get('http://localhost:5000/product/productsName');
+      const data = response.data;
+      console.log(data)
+      setProductDropDown(data);
+    }
+    catch(error){
+      console.error('Error fetching orders:', error);
+    }
+  }
+  fetchproducts ();
+
+},[])
 const fetchOrders = async () => {
   try {
       let response;
@@ -71,6 +153,7 @@ const fetchOrders = async () => {
   }, []);
 
   const handleAddOrderDialogOpen = () => {
+    setTotalPrice(0);
     setAddOrderOpen(true);
   };
 
@@ -80,6 +163,7 @@ const fetchOrders = async () => {
     setNewQuantity('');
     setNewPaymentMethod('');
     setNewAddress('');
+    setTotalPrice(0);
      
      
     setAddingOrderError({
@@ -93,6 +177,8 @@ const fetchOrders = async () => {
   
 
   const handleInputChange = (field: string, value: string) => {
+
+
     if (field === 'product') setNewProduct(value);
     if (field === 'quantity') setNewQuantity(value);
     if (field === 'paymentMethod') setNewPaymentMethod(value);
@@ -138,6 +224,7 @@ const fetchOrders = async () => {
 
   const handleEditDialogOpen = (order: any) => {
     setSelectedOrder(order);
+    
     setNewProduct(order.product);
     setNewQuantity(order.quantity);
     setNewPaymentMethod(order.paymentMethod);
@@ -163,6 +250,13 @@ const fetchOrders = async () => {
       }))
       isValid = false;
       
+    }else if(Number(newQuantity) < 0){
+      setAddorderError((prevState)=>({
+        ...prevState,
+        quantityError:"qunatity should be positive number"
+      }))
+      isValid = false;
+
     }
 
     if (newPaymentMethod.trim() === '') {
@@ -202,6 +296,7 @@ const fetchOrders = async () => {
             draggable: true,
           })
         }
+       
         setRows((prevRows) =>
           prevRows.map((row) =>
             row.id === selectedOrder.id
@@ -213,6 +308,35 @@ const fetchOrders = async () => {
         setEditOpen(false);
         setLoading(false);
       } catch (error) {
+
+        if(error instanceof AxiosError){
+          if(error.response?.status === 404){
+
+            toast.error(error.response?.data.message, {
+              position: "top-right",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              style: {
+                backgroundColor: "white", 
+                color: "crimson", 
+              }
+            });
+          }
+          else if(error.response?.status === 405){
+            toast.error("please select lessthan stock item!", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            })
+            return;
+          }
+        }
         console.error('Error updating order:', error);
         setLoading(false);
       }
@@ -319,11 +443,13 @@ const fetchOrders = async () => {
         setNewQuantity('');
         setNewPaymentMethod('');
         setNewAddress('');
+        setTotalPrice(0)
         setAddingOrderError({
           productAddError:'',
           quantityAddError:'',
           paymenentmethodAddError:'',
-          addressAddError:''
+          addressAddError:'',
+          
         })
 
 
@@ -363,31 +489,37 @@ const fetchOrders = async () => {
               pauseOnHover: true,
               draggable: true,
             })
+            return;
           }
         }
         console.error('Error adding order:', error);
         setLoading(false);
       }
       finally{
-        setAddOrderOpen(false);
-        setLoading(false);
-        setNewProduct('');
-        setNewQuantity('');
-        setNewPaymentMethod('');
-        setNewAddress('');
-        setAddingOrderError({
-          productAddError:'',
-          quantityAddError:'',
-          paymenentmethodAddError:'',
-          addressAddError:''
-        })
-
+       
 
         fetchOrders();
       }
     }
   };
- 
+  React.useEffect(() => {
+    
+    if (newProduct && productPrice && newQuantity !=='') {
+      const pricePerProduct = productPrice[newProduct];
+      if (pricePerProduct) {
+     
+        const price = parseFloat(pricePerProduct); 
+        if (!isNaN(price)) {
+          setTotalPrice(price * parseFloat(newQuantity));  
+        } else {
+          setTotalPrice(0);  
+        } 
+      } else {
+        setTotalPrice(0); 
+      }
+    }
+  }, [newProduct, newQuantity, productPrice]);
+  // Re-run whenever newProduct or newQuantity changes
 
   // const columns = React.useMemo<MRT_ColumnDef<any>[]>(() => [
     
@@ -445,6 +577,10 @@ const fetchOrders = async () => {
       {
         accessorKey: 'product',
         header: 'Product Name',
+      },
+      {
+        accessorKey: 'ordered_date',
+        header: 'Order Date',
       },
       {
         accessorKey: 'quantity',
@@ -562,33 +698,42 @@ const fetchOrders = async () => {
           <DialogContent>
           <div className={styles.editdailogcontent}>
               
-            <p className={styles.labeles}>Product</p>
+            <p className={styles.labeles}>Product<span className='requiredAsterisk'> *</span></p>
             <Select
               value={newProduct}
               onChange={(e) => handleInputChange('product', e.target.value)}
               className={styles.selectsfields}
             >
-              <MenuItem value="Laptop">Laptop</MenuItem>
+              {/* <MenuItem value="Laptop">Laptop</MenuItem>
               <MenuItem value="Mouse">Mouse</MenuItem>
               <MenuItem value="Keyboard">Keyboard</MenuItem>
               <MenuItem value="Headphone">HeadPhone</MenuItem>
-              <MenuItem value="Mobile">Mobile</MenuItem>
+              <MenuItem value="Mobile">Mobile</MenuItem> */}
+
+          {productDropDown.map((product, index) => (
+            <MenuItem key={index} value={product}>
+              {product}
+            </MenuItem>
+          ))}
+
             </Select>
             <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                   {addingOrderError.productAddError ? addingOrderError.productAddError: ' '}</FormHelperText>
-            <p className={styles.labeles}>Quantity</p>
+            <p className={styles.labeles}>Quantity<span className='requiredAsterisk'> *</span></p>
             <TextField
               size="small"
               value={newQuantity}
               onChange={(e) => handleInputChange('quantity', e.target.value)}
               margin="normal"
               type="number"
+              inputProps={{min:0}}
+              
               className={`${styles.textField} ${styles.inputBaseRoot}`}
             />
             <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                   {addingOrderError.quantityAddError ? addingOrderError.quantityAddError: ' '}</FormHelperText>
             
-            <p className={styles.labeles}>Payment Method</p>
+            <p className={styles.labeles}>Payment Method<span className='requiredAsterisk'> *</span></p>
           
                           <FormControl className={`${styles.radios} ${styles.inputBaseRoot}`}>
                   <RadioGroup
@@ -639,7 +784,7 @@ const fetchOrders = async () => {
             <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
             {addingOrderError.paymenentmethodAddError ? addingOrderError.paymenentmethodAddError: ' '}</FormHelperText>
 
-            <p className={styles.labeles}>Address</p>
+            <p className={styles.labeles}>Address<span className='requiredAsterisk'> *</span></p>
             <TextField
               size="small"
               value={newAddress}
@@ -649,15 +794,30 @@ const fetchOrders = async () => {
             />
               <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
             {addingOrderError.addressAddError ? addingOrderError.addressAddError: ' '}</FormHelperText>
-
+                            {totalPrice > 0 && (
+                  <>
+                    <p className={styles.labeles}>Total Price</p>
+                    <TextField
+                      size="small"
+                      value={`Rs: ${totalPrice.toFixed(2)}`}
+                      margin="normal"
+                      className={`${styles.textField} ${styles.inputBaseRoot}`}
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
+                  </>
+                )}
+            
          </div>
           </DialogContent>
+          
           <DialogActions>
             <Button onClick={handleCloseAddOrderDialog} color="secondary"  className='mainButton' >
             <Typography textTransform={'none'}>Cancel</Typography>   
             </Button>
             <Button onClick={handleAddOrderSubmit } color="primary"  className='mainButton'>
-           <Typography textTransform={'none'}>{loading ? 'Adding...' : 'Add'}</Typography>   
+           <Typography textTransform={'none'}>Add</Typography>   
             </Button>
           </DialogActions>
         </Dialog>
@@ -692,8 +852,8 @@ const fetchOrders = async () => {
                 </IconButton> 
           </Box>
           <DialogContent>
-            <p className={styles.labeles}>Product</p>
-            <Select
+            <p className={styles.labeles}>Product<span className='requiredAsterisk'> *</span></p>
+            {/* <Select
               value={newProduct}
               onChange={(e) => handleInputChange('product', e.target.value)}
               className={styles.selectsfields}
@@ -703,22 +863,44 @@ const fetchOrders = async () => {
               <MenuItem value="Keyboard">Keyboard</MenuItem>
               <MenuItem value="Headphone">HeadPhone</MenuItem>
               <MenuItem value="Mobile">Mobile</MenuItem>
-            </Select>
+            </Select> */}
+
+              <Autocomplete
+              value={newProduct || ''}
+              onChange={(e, newValue) => handleInputChange('product', newValue || '')}
+              options={productDropDown}
+              className={styles.auto}
+              // freeSolo // Allow custom input (this allows users to type their own value)
+              renderInput={(params) => <TextField {...params} size="small"   />}
+              />
             <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
             {addOrderError.productError ? addOrderError.productError: ' '}</FormHelperText>
 
-            <p className={styles.labeles}>Quantity</p>
+            <p className={styles.labeles}>Availabel Quantity<span className='requiredAsterisk'> *</span></p>
             <TextField
               size="small"
               value={newQuantity}
               onChange={(e) => handleInputChange('quantity', e.target.value)}
               margin="normal"
               type="number"
+              inputProps={{min:0}}
+              className={`${styles.textField} ${styles.inputBaseRoot}`}
+            />
+             <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+             {addOrderError.quantityError ? addOrderError.quantityError: ' '}</FormHelperText>
+             <p className={styles.labeles}>Quantity<span className='requiredAsterisk'> *</span></p>
+            <TextField
+              size="small"
+              value={newQuantity}
+              onChange={(e) => handleInputChange('quantity', e.target.value)}
+              margin="normal"
+              type="number"
+              inputProps={{min:0}}
               className={`${styles.textField} ${styles.inputBaseRoot}`}
             />
               <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
               {addOrderError.quantityError ? addOrderError.quantityError: ' '}</FormHelperText>
-            <p className={styles.labeles}>Payment Method</p>
+            <p className={styles.labeles}>Payment Method<span className='requiredAsterisk'> *</span></p>
             <FormControl className={`${styles.radios} ${styles.inputBaseRoot}`}>
               <RadioGroup
                 value={newPaymentMethod}
@@ -751,7 +933,7 @@ const fetchOrders = async () => {
             <p style={{ margin:"0px", marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
             {addOrderError.paymenentmethodError ? addOrderError.paymenentmethodError: ' '}</p>
 
-            <p className={styles.labeles}>Address</p>
+            <p className={styles.labeles}>Address<span className='requiredAsterisk'> *</span></p>
             <TextField
               size="small"
               value={newAddress}

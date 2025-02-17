@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import { useEffect, useState } from 'react'; 
 import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
@@ -33,7 +33,7 @@ const AlterChart = () => {
         const formattedData = response.data.map((item) => ({
           date: new Date(item.created_date),
           value: item.quantity,
-          product: item.product, // Include product in formatted data
+          product: item.product,
         }));
         console.log(formattedData, "formatted Data");
         setDatas(formattedData);

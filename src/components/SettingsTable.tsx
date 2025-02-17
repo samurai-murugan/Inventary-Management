@@ -21,7 +21,7 @@ const SettingsTable: React.FC = () => {
   const [deleteOpen, setDeleteOpen] = React.useState(false);
   const [editOpen, setEditOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<any>(null);
-  const [rows, setRows] = React.useState<any[]>([]); // Data for the table
+  const [rows, setRows] = React.useState<any[]>([]); 
   const [newFirstName, setNewFirstName] = React.useState('');
   const [newLastName, setNewLastName] = React.useState('');
   const [loading, setLoading] = React.useState(false);
@@ -30,11 +30,10 @@ const SettingsTable: React.FC = () => {
     lastnameError: '',
   });
 
-  // Fetch users from the API
   const fetchUsers = async () => {
     try {
       const response = await axios.get('http://localhost:5000/users/users/');
-      setRows(response.data); // Set fetched data into rows
+      setRows(response.data); 
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -44,7 +43,6 @@ const SettingsTable: React.FC = () => {
     fetchUsers();
   }, []);
 
-  // Define columns for MaterialReactTable
   const columns = useMemo<MRT_ColumnDef<any>[]>(() => [
     {
       accessorKey: 'userName',
@@ -52,8 +50,8 @@ const SettingsTable: React.FC = () => {
       muiTableHeadCellProps: {
         style: {
         
-        color: 'black',  // Text color set to black
-        fontSize: '16px',  // Adjust the font size of the header
+        color: 'black',  
+        fontSize: '16px', 
         height:"50px"
 
         },
@@ -65,8 +63,8 @@ const SettingsTable: React.FC = () => {
       muiTableHeadCellProps: {
         style: {
         
-        color: 'black',  // Text color set to black
-        fontSize: '16px',  // Adjust the font size of the header
+        color: 'black', 
+        fontSize: '16px',
         },
       },
     },
@@ -76,8 +74,8 @@ const SettingsTable: React.FC = () => {
       muiTableHeadCellProps: {
         style: {
         
-        color: 'black',  // Text color set to black
-        fontSize: '16px',  // Adjust the font size of the header
+        color: 'black', 
+        fontSize: '16px',  
         },
       },
     },
@@ -126,21 +124,18 @@ const SettingsTable: React.FC = () => {
         },
       },
     },
-  ], []);
+  ],[]);
 
-  // Handle view user data
   const handleView = (user: any) => {
     setSelectedUser(user);
     setOpen(true);
   };
 
-  // Handle open delete dialog
   const handleDeleteDialogOpen = (user: any) => {
     setSelectedUser(user);
     setDeleteOpen(true);
   };
 
-  // Delete user
   const handleDelete = async () => {
     if (selectedUser) {
       try {
@@ -158,7 +153,7 @@ const SettingsTable: React.FC = () => {
                   });
                
                 }
-        setRows((prevRows) => prevRows.filter((row) => row.id !== selectedUser.id)); // Update rows after deletion
+        setRows((prevRows) => prevRows.filter((row) => row.id !== selectedUser.id));
         setDeleteOpen(false);
         setLoading(false);
       } catch (error) {
@@ -371,13 +366,13 @@ const SettingsTable: React.FC = () => {
         <DialogContent>
           {selectedUser && (
             <div className={styles.paragrap}>
-              <p className={styles.labeles}>Email</p>
+              <p className={styles.labeles}>Email<span className='requiredAsterisk'> *</span></p>
               <TextField size="small" value={selectedUser.email_id} disabled className={styles.textField} />
               <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                 {edituserdetailsError.firstnameError ? " " : " "}
               </FormHelperText>
 
-              <p className={styles.labeles}>FirstName</p>
+              <p className={styles.labeles}>FirstName<span className='requiredAsterisk'> *</span></p>
               <TextField
                 size="small"
                 value={newFirstName}
@@ -387,7 +382,7 @@ const SettingsTable: React.FC = () => {
               <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                 {edituserdetailsError.firstnameError ? edituserdetailsError.firstnameError : " "}
               </FormHelperText>
-              <p className={styles.labeles}>LastName</p>
+              <p className={styles.labeles}>LastName<span className='requiredAsterisk'> *</span></p>
               <TextField
                 size="small"
                 value={newLastName}

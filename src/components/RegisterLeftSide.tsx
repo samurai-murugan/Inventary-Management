@@ -1,14 +1,15 @@
 import { Box, Typography, TextField, Stack, InputAdornment, Button, Tooltip } from "@mui/material";
 import { MdEmail } from "react-icons/md";
 import styles from './RegisterLeftSide.module.css';
-import { FaFacebookF, FaUser, FaLock, FaGithub } from "react-icons/fa";
+import { FaFacebookF, FaUser, FaLock, FaGithub, FaEyeSlash, FaEye } from "react-icons/fa";
 import { IoLogoLinkedin } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
 import { useState, useEffect, useCallback } from "react";
 import { RegisterUserDetailError, RegisterUserDetailType } from "../Interface/Login.interface";
 import { getErrorMsg } from '../data/errorMsg';
+import { toast, ToastContainer } from "react-toastify";
 
-const RightSide = () => {
+const RightSide = ({ setLogin }: { setLogin: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const [registerUserDetails, setRegisterUserDetails] = useState<RegisterUserDetailType>({
     firstname: '',
     lastname: '',
@@ -24,6 +25,12 @@ const RightSide = () => {
     passwordError: '',
     confirmPasswordError: ''
   });
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordConfirmVisible, setPasswordConfirmVisible] = useState(false);
+  const handleLoginPage=()=>{
+    console.log("I am going to the Login page")
+    setLogin(true);
+  }
 
   useEffect(() => {
     console.log("RightSide");
@@ -82,15 +89,15 @@ const RightSide = () => {
       errorMessages.passwordError = getErrorMsg('2.4', 'password_is_empty');
       isValid = false;
     } else if (!passwordRegex.test(registerUserDetails.password)) {
-      errorMessages.passwordError = getErrorMsg('2.7', 'password_is_invalid');
+      errorMessages.passwordError = getErrorMsg('2.5', 'password_is_Weak');
       isValid = false;
     }
     if (registerUserDetails.confirmpassword.trim() === '') {
-      errorMessages.confirmPasswordError = getErrorMsg('2.5', 'confirm_password');
-      errors.push(getErrorMsg('2.5', 'confirm_password'));
+      errorMessages.confirmPasswordError = getErrorMsg('2.7', 'confirm_password');
+      errors.push(getErrorMsg('2.7', 'confirm_password'));
       isValid = false;
     } else if (registerUserDetails.password !== registerUserDetails.confirmpassword) {
-      errorMessages.confirmPasswordError = getErrorMsg('2.6', 'confirm_password_mismatch');
+      errorMessages.confirmPasswordError = getErrorMsg('2.8', 'confirm_password_mismatch');
       isValid = false;
     }
 
@@ -100,7 +107,7 @@ const RightSide = () => {
       console.log(registerUserDetails); // For debugging purposes
 
       try {
-        const response = await fetch('http://localhost:5000/users/register', {
+        const response:any = await fetch('http://localhost:5000/users/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -118,14 +125,26 @@ const RightSide = () => {
 
         if (response.ok) {
           console.log('Registration successful:', data);
-          alert(data.message);
-          setRegisterUserDetails({
-            firstname: '',
-            lastname: '',
-            email: '',
-            password: '',
-            confirmpassword: ''
-          });
+          // alert(data.message);
+           toast.success(data.message, {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                });
+
+                setTimeout(()=>{  
+                  handleLoginPage();
+                  setRegisterUserDetails({
+                    firstname: '',
+                    lastname: '',
+                    email: '',
+                    password: '',
+                    confirmpassword: ''
+                  });
+                },2000);
           setRegisterUserDetailsError({
             firstnameError: '',
             lastnameError: '',
@@ -143,11 +162,19 @@ const RightSide = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+  const toggleConfirmPasswordVisibility = () => {
+    setPasswordConfirmVisible(!passwordConfirmVisible);
+  };
   return (
     <form onSubmit={handleSubmit}>
+      <ToastContainer />
+
       <Box className={styles.RegisterLeftSideContainer} sx={{ width: '100%', maxWidth: 500 }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Registration
+        Sign Up
         </Typography>
         <Stack direction={"column"} spacing={2} width={"80%"}>
           <p className={styles.inputLabels}>
@@ -218,9 +245,11 @@ const RightSide = () => {
             value={registerUserDetails.password}
             placeholder="Enter Password"
             onChange={(e) => handleInputChange('password', e.target.value)}
-            type="password"
+            type={passwordVisible ? "text" : "password"}
             InputProps={{
-              endAdornment: <InputAdornment position='end'><FaLock /></InputAdornment>
+              endAdornment: <InputAdornment position="end" onClick={togglePasswordVisibility}>
+                            {passwordVisible ? <FaEyeSlash/> : <FaEye />} {/* Toggle the eye icon */}
+                          </InputAdornment>
             }}
           />
           <p style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: "12px" }}>
@@ -238,9 +267,11 @@ const RightSide = () => {
             value={registerUserDetails.confirmpassword}
             placeholder="Enter Confirm Password"
             onChange={(e) => handleInputChange('confirmpassword', e.target.value)}
-            type="password"
+            type={passwordConfirmVisible ? "text" : "password"}
             InputProps={{
-              endAdornment: <InputAdornment position='end'><FaLock /></InputAdornment>
+            endAdornment: <InputAdornment position="end" onClick={toggleConfirmPasswordVisibility}>
+              {passwordConfirmVisible ? <FaEyeSlash/> : <FaEye />} {/* Toggle the eye icon */}
+            </InputAdornment>
             }}
           />
           <p style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: "12px" }}>
@@ -249,29 +280,29 @@ const RightSide = () => {
         </Stack>
 
         <Button variant="contained" sx={{ width: "80%", height: "40%" }} type="submit">
-          <Typography style={{ textTransform: 'none', fontWeight: 700 }}>Signup</Typography>
+          <Typography style={{ textTransform: 'none', fontWeight: 700 }}>Sign up</Typography>
         </Button>
 
         <Typography variant="body2" className={styles.orLogin}>
           or Signup with social platforms
         </Typography>
         <Stack direction={"row"} spacing={2} className={styles.iconbutton}>
-          <Tooltip title="Google" arrow>
+          <Tooltip  title="yet to implement this features" arrow>
             <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }}>
               <FcGoogle size={20} />
             </Button>
           </Tooltip>
-          <Tooltip title="FaceBook" arrow>
+          <Tooltip  title="yet to implement this features" arrow>
             <Button variant="outlined" className={styles.IconButton2} sx={{ minWidth: '10px' }}>
               <FaFacebookF size={20} />
             </Button>
           </Tooltip>
-          <Tooltip title="Github" arrow>
+          <Tooltip title="yet to implement this features" arrow>
             <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }}>
               <FaGithub size={20} />
             </Button>
           </Tooltip>
-          <Tooltip title="LinkedIn" arrow>
+          <Tooltip  title="yet to implement this features" arrow>
             <Button variant="outlined" className={styles.IconButton3} sx={{ minWidth: '10px' }}>
               <IoLogoLinkedin size={20} />
             </Button>

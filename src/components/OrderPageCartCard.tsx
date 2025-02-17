@@ -73,8 +73,8 @@
 
 import { Box, Grid } from '@mui/material';
 import React, { useState, useEffect } from 'react';
-import { FaBox, FaShoppingCart } from 'react-icons/fa'; // Importing icons for the product card
-import imageDetails from '../utils/imageDetails';
+import { FaBox } from 'react-icons/fa'; // Importing icons for the product card
+
 import ProductCardForOrderPage from './CartComponent';
 import { GiLaptop, GiMouse } from 'react-icons/gi';
 import { BsFillKeyboardFill } from 'react-icons/bs';
@@ -129,13 +129,24 @@ const getIcon = (productName: string) => {
     }
   };
 
+  const updateQuantity = (productid: string, newQuantity: string) => {
+    setProductDetails((prevDetails) => {
+      return prevDetails.map((product) => {
+        if (product.productid === productid) {
+          return { ...product, quantity: newQuantity }; // Update quantity for matching product
+        }
+        return product;
+      });
+    });
+  };
+
   return (
     <Box sx={{ marginTop: 2.5, marginLeft: "10px", marginRight: "10px", fontSize: '0.6rem' }}>
       <Grid container spacing={1} sx={{ marginTop: 3 }}>
         {productDetails.map((product) => {
           const icon = getIcon(product.productname); // Get the icon based on product name
           return (
-            <Grid item xs={12} sm={8} md={2.7} key={product.productid} sx={{marginLeft:"20px", marginBottom: 3,gap:'10px' }}>
+            <Grid item xs={12} sm={8} md={2.7} key={product.productid} sx={{marginLeft:"20px", marginBottom: 3,gap:'10px',height:'120px' }}>
               <ProductCardForOrderPage product={product} icon={icon} />
             </Grid>
           );

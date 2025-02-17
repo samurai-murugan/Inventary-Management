@@ -1,7 +1,7 @@
 import { Box, Typography, TextField, Stack, InputAdornment, Button } from "@mui/material";
 import styles from './RightSide.module.css';
 import Tooltip from '@mui/material/Tooltip';
-import { FaFacebookF, FaUser, FaLock, FaGithub } from "react-icons/fa";
+import { FaFacebookF, FaGithub, FaEyeSlash, FaEye, FaAt } from "react-icons/fa";
 import { IoLogoLinkedin } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
@@ -15,6 +15,7 @@ import axios from "axios";
 const RightSide = () => {
   const [userDetailsError, setUserDetailsError] = useState<UserDetailsError>({ userNameError: '', passwordError: '' });
   const [userDetails, setUserDetails] = useState<UserDetailsType>({ userName: '', password: '' });
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (event: any) => {
@@ -72,19 +73,20 @@ const RightSide = () => {
           draggable: true,
         });
 
-        const { userName, id, role } = response.data.user;
+        const { userName, id, role,email } = response.data.user;
         localStorage.setItem('userName', userName);
         localStorage.setItem('userRole', role);
         localStorage.setItem('userId', id);
+        localStorage.setItem("userEmail",email)
 
         if (role === 'admin') {
           console.log("Admin logged in successfully");
         }
 
-        setTimeout(() => {
-          navigate('/homepage');
-        }, 2000);
-        // navigate('/homepage');
+        // setTimeout(() => {
+        //   navigate('/homepage');
+        // }, 2000);
+        navigate('/homepage');
       } else {
         console.log('Login failed:', response.data.message);
 
@@ -105,26 +107,46 @@ const RightSide = () => {
           }));
         }
       }
+      // if(response.data.message ==='password incorrect'){
+      //   setUserDetailsError((prevState) => ({
+      //     ...prevState,
+      //     passwordError: 'incorrect password.',
+      //   }));
+      //   return
+      // }
 
     } catch (error: any) {
       console.error('Error during login:', error);
-
-      // Handle error during login
-      if (error.response) {
-        console.error('Backend error message:', error.response.data);
-        setUserDetailsError((prevState) => ({
+      if (error.response && error.response.data.message === 'password incorrect') {
+        // Update state with error message for password field
+        setUserDetailsError((prevState)=>({
           ...prevState,
-          userNameError: error.response.data.message || 'An error occurred. Please try again.',
-        }));
-      } else {
-        setUserDetailsError((prevState) => ({
-          ...prevState,
-          userNameError: 'Network error. Please try again later.',
+          passwordError:'Incorrect password, please try again.'
         }));
       }
+      if (error.response && error.response.data.message === 'User not found') {
+        // Update state with error message for password field
+        setUserDetailsError((prevState)=>({
+          ...prevState,
+          userNameError:'User not found.'
+        }));
+      }
+      // Handle error during login
+      // if (error.response) {
+      //   console.error('Backend error message:', error.response.data);
+      //   setUserDetailsError((prevState) => ({
+      //     ...prevState,
+      //     userNameError: error.response.data.message || 'An error occurred. Please try again.',
+      //   }));
+      // } else {
+      //   setUserDetailsError((prevState) => ({
+      //     ...prevState,
+      //     userNameError: 'Network error. Please try again later.',
+      //   }));
+      // }
 
       // Show error toast for network error
-      toast.error("An error occurred. Please try again later.", {
+      toast.error(error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -134,7 +156,7 @@ const RightSide = () => {
       });
     }
 
-    setUserDetails({ userName: '', password: '' });
+    // setUserDetails({ userName: '', password: '' });
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -151,6 +173,10 @@ const RightSide = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
     <form onSubmit={handleLogin}>
       {/* Toast Container for showing notifications */}
@@ -158,22 +184,22 @@ const RightSide = () => {
 
       <Box className={styles.RightContainer} sx={{ width: '100%', maxWidth: 500 }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Login
+          Sign in
         </Typography>
         <Stack direction={"column"} spacing={2} width={"80%"}>
           <p className={styles.inputLabels}>
-            Username<span className={styles.requiredAsterisk}> *</span>
+            Email<span className={styles.requiredAsterisk}> *</span>
           </p>
           <TextField
             id="outlined-basic"
             size="small"
             className={styles.inputField}
-            placeholder="Enter Username"
+            placeholder="Enter Email"
             variant="outlined"
             value={userDetails.userName}
             onChange={(e) => handleInputChange('userName', e.target.value)}
             InputProps={{
-              endAdornment: <InputAdornment position="end"><FaUser /></InputAdornment>,
+              endAdornment: <InputAdornment position="end"><FaAt  /></InputAdornment>,
             }}
           />
 
@@ -190,11 +216,14 @@ const RightSide = () => {
             size="small"
             className={styles.inputField}
             variant="outlined"
-            type="password"
+            type={passwordVisible ? "text" : "password"}
             value={userDetails.password}
             onChange={(e) => handleInputChange('password', e.target.value)}
             InputProps={{
-              endAdornment: <InputAdornment position="end"><FaLock /></InputAdornment>
+              // endAdornment: <InputAdornment position="end"><FaLock /></InputAdornment>
+              endAdornment:  <InputAdornment position="end" onClick={togglePasswordVisibility}>
+              {passwordVisible ? <FaEyeSlash/> : <FaEye />} {/* Toggle the eye icon */}
+            </InputAdornment>
             }}
           />
           <p style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: "12px" }}>
@@ -210,7 +239,7 @@ const RightSide = () => {
           sx={{ width: "80%", height: "40%" }}
           type="submit"
         >
-          <Typography style={{ textTransform: 'none', fontWeight: 700 }}>Login</Typography>
+          <Typography style={{ textTransform: 'none', fontWeight: 700 }}>Sign in</Typography>
         </Button>
 
         <Typography variant="body2" className={styles.orLogin}>
@@ -218,25 +247,28 @@ const RightSide = () => {
         </Typography>
 
         <Stack direction={"row"} spacing={2} className={styles.iconbutton}>
-          <Tooltip title="Google" arrow>
+          <Tooltip title="yet to implement this features" arrow>
             <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }}>
               <FcGoogle size={20} />
             </Button>
           </Tooltip>
 
-          <Tooltip title="Facebook" arrow>
+          {/* <Tooltip title="Facebook" arrow> */}
+          <Tooltip title="yet to implement this features" arrow>
             <Button variant="outlined" className={styles.IconButton2} sx={{ minWidth: '10px' }}>
               <FaFacebookF size={20} />
             </Button>
           </Tooltip>
 
-          <Tooltip title="Github" arrow>
+          {/* <Tooltip title="Github" arrow> */}
+          <Tooltip title="yet to implement this features" arrow>
             <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }}>
               <FaGithub size={20} />
             </Button>
           </Tooltip>
 
-          <Tooltip title="LinkedIn" arrow>
+          {/* <Tooltip title="LinkedIn" arrow> */}
+          <Tooltip title="yet to implement this features" arrow>
             <Button variant="outlined" className={styles.IconButton3} sx={{ minWidth: '10px' }}>
               <IoLogoLinkedin size={20} />
             </Button>

@@ -104,10 +104,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, icon }) => {
         },
       }}
     >
-      {/* Container for the icon */}
+
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '80px' }}>
-        <div style={{ fontSize: '50px', color: '#3f51b5' }}> {/* Increased the font size of the icon */}
-          {icon} {/* Display the icon */}
+        <div style={{ fontSize: '50px', color: '#3f51b5' }}>
+          {icon} 
         </div>
       </div>
 
@@ -120,7 +120,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, icon }) => {
           flexGrow: 1,
           backgroundColor: "#ADE8F4",
           padding: '0px',
-          textAlign: 'left', // Align text to the right
+          textAlign: 'left',
           
         }}
       >
@@ -128,10 +128,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, icon }) => {
           {product.product}
         </Typography>
         <Typography variant="body2" sx={{ marginLeft: "5px" ,textAlign:'left' }}>
-          <strong style={{ color: "green" }}>Total Orders:</strong> {product.totalquantity}
+          <strong style={{ color: "green" }}>Total Orders:</strong> {Number(product.totalquantity).toLocaleString()}
         </Typography>
         <Typography variant="body2" sx={{ marginTop: 1, textAlign:'left' ,marginLeft: "5px" }}>
-          <strong>Total Price:</strong> {product.totalprice}
+          <strong>Total Price:</strong> {Number(product.totalprice).toLocaleString()}
         </Typography>
       </CardContent>
     </Card>

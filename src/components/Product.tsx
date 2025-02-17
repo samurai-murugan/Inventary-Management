@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Typography, Select, MenuItem, Box, FormHelperText } from '@mui/material';
+import {IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Typography, Box, FormHelperText, Autocomplete } from '@mui/material';
 import { IoAddCircleOutline, IoEyeOutline } from "react-icons/io5";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { MdModeEditOutline } from "react-icons/md";
@@ -26,6 +26,9 @@ const ProductTable: React.FC = () => {
   const [newPrice, setNewPrice] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [addProductOpen, setAddProductOpen] = React.useState(false);
+     const [productList, setProductList] = React.useState([
+    "Laptop", "Mouse", "Keyboard", "Headphone", "Mobile"
+  ]);
   
 
  
@@ -72,10 +75,20 @@ const ProductTable: React.FC = () => {
   };
 
   const handleInputChange = (field: string, value: string) => {
+    console.log("Updated Field: ", field, " New Value: ", value);
+    console.log("new Product===>", field,value)
     setNewProduct((prevState) => ({
       ...prevState,
       [field]: value,
     }));
+
+    if (field === 'name') {
+      setNewName(value);  // Update name directly
+    } else if (field === 'quantity') {
+      setNewQuantity(value);  // Update quantity
+    } else if (field === 'price') {
+      setNewPrice(value);  // Update price
+    }
   };
 
   const handleView = (product: any) => {
@@ -116,6 +129,7 @@ const ProductTable: React.FC = () => {
 
   const handleEditDialogOpen = (product: any) => {
     console.log('Opening edit dialog for:', product);
+    console.log('Opening edit dialog for:', product);
     setSelectedProduct(product);
     setNewName(product.productname);
     setNewQuantity(product.quantity);
@@ -124,8 +138,10 @@ const ProductTable: React.FC = () => {
   };
 
   const handleEditSubmit = async () => {
-    let isValid = true;
 
+    console.log('Submitting:', { newName, newQuantity, newPrice });
+    let isValid = true;
+      console.log(newName,'newon')
     if (newName.trim() === '') {
       setEditProductDetailsError((prevState) => ({
         ...prevState,
@@ -139,8 +155,8 @@ const ProductTable: React.FC = () => {
         quantityError: 'Quantity should be a valid number.',
       }));
       isValid = false;
-    }
-    if (newPrice.trim() === '' || isNaN(Number(newPrice))) {
+    }else if(Number(newQuantity)<0)
+    if (newPrice.trim() === '' || isNaN(parseFloat(newPrice))) {
       setEditProductDetailsError((prevState) => ({
         ...prevState,
         priceError: 'Price should be a valid number.',
@@ -155,7 +171,7 @@ const ProductTable: React.FC = () => {
       const response= await axios.put(`http://localhost:5000/product/updateproduct/${selectedProduct.id}`, {
           productname: newName,
           quantity: newQuantity,
-          price: newPrice,
+          price: parseInt(newPrice),
         });
         if(response.status ===200){
           toast.success(response.data.message, {
@@ -231,10 +247,10 @@ const ProductTable: React.FC = () => {
 
     if (isValid) {
       try {
-
+   console.log("valid the addd", newProduct.name)
         setLoading(true);
         const response = await axios.post('http://localhost:5000/product/addProduct', {
-          productname: newProduct.name,
+          productname: newProduct?.name,
           quantity: Number(newProduct.quantity),
           price: Number(newProduct.price),
         });
@@ -249,9 +265,20 @@ const ProductTable: React.FC = () => {
           });
        
         }
-        const product = response.data.product
 
-        // setRows((prevRows) => [...prevRows, product]);
+        console.log(response.data)
+        const product = response.data.newProduct
+        console.log(product)
+        // const newProductData = response.data.product;
+      
+        // Add the new product to the table rows
+        setProductList((prevList) => [...prevList, product.productname]);
+        setRows((prevRows) => [...prevRows, product]);
+
+        // Add the new product name to the productList for autocomplete if it's not already there
+      
+        
+        setRows((prevRows) => [...prevRows, product]);
         fetchProducts();
         setAddProductOpen(false);
         setLoading(false);
@@ -272,6 +299,11 @@ const ProductTable: React.FC = () => {
     {
       accessorKey: 'productname',
       header: 'Product Name',
+    },
+    {
+      accessorKey: 'productAddedDate',
+      header: 'Product_Added_date',
+      size:130,
     },
     {
       accessorKey: 'quantity',
@@ -411,36 +443,34 @@ const ProductTable: React.FC = () => {
           <DialogContent >
             {selectedProduct && (
               <div className={styles.editdailogcontent}>
-                <p className={styles.labeles}>Product Name</p>
+                <p className={styles.labeles}>Product Name<span className='requiredAsterisk'> *</span></p>
 
-                <Select
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  className={styles.selectsfields}
-                >
-                  <MenuItem value="Laptop">Laptop</MenuItem>
-                  <MenuItem value="Mouse">Mouse</MenuItem>
-                  <MenuItem value="Keyboard">Keyboard</MenuItem>
-                  <MenuItem value="Headphone">HeadPhone</MenuItem>
-                  <MenuItem value="Mobile">Mobile</MenuItem>
-                </Select>
-
+                <Autocomplete
+              value={newName || ''}
+              onChange={(e, newValue) => handleInputChange('name', newValue || '')}
+              options={productList}
+              className={styles.auto}
+              // freeSolo // Allow custom input (this allows users to type their own value)
+              renderInput={(params) => <TextField {...params} size="small"   />}
+/>
 
 
                 <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                   {editProductDetailsError.productnameError ? editProductDetailsError.productnameError : ' '}</FormHelperText>
 
-                <p className={styles.labeles}>Quantity</p>
+                <p className={styles.labeles}>Quantity<span className='requiredAsterisk'> *</span></p>
                 <TextField
                   size="small"
                   value={newQuantity}
                   onChange={(e) => setNewQuantity(e.target.value)}
                   className={`${styles.textField} ${styles.inputBaseRoot}`}
-                />
+                  type='number'
+                  InputProps={{ inputProps: { min: 0,step: 1 } }}
+                 />
                 <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                   {editProductDetailsError.quantityError ? editProductDetailsError.quantityError : ' '}</FormHelperText>
 
-                <p className={styles.labeles}>Price</p>
+                <p className={styles.labeles}>Price<span className='requiredAsterisk'> *</span></p>
                 <TextField
                   size="small"
                   value={newPrice}
@@ -468,9 +498,9 @@ const ProductTable: React.FC = () => {
           </Box>
           <DialogContent>
             <div className={styles.paragrap}>
-              <p className={styles.addlabels}>Product Name</p>
+              <p className={styles.addlabels}>Product Name<span className='requiredAsterisk'> *</span></p>
 
-              <Select
+              {/* <Select
                 value={newProduct.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 className={styles.selectsfields}
@@ -480,9 +510,18 @@ const ProductTable: React.FC = () => {
                 <MenuItem value="Keyboard">Keyboard</MenuItem>
                 <MenuItem value="Headphone">HeadPhone</MenuItem>
                 <MenuItem value="Mobile">Mobile</MenuItem>
-              </Select>
+              </Select> */}
+
+      <Autocomplete
+          value={newProduct.name || ''}
+          onChange={(e, newValue) => handleInputChange('name', newValue||'')}
+          options={productList}
+          className={styles.auto}
+          freeSolo  // Allows custom input
+          renderInput={(params) => <TextField {...params} size="small" onChange={(e) => handleInputChange('name',e.target.value)} />}
+        />
            <FormHelperText  style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.productnameAddError ? ProductDetailsAddError.productnameAddError : ' '}</FormHelperText>
-              <p className={styles.addlabels}>Quantity</p>
+              <p className={styles.addlabels}>Quantity<span className='requiredAsterisk'> *</span></p>
               <TextField
                 size="small"
                 type="number"
@@ -491,7 +530,7 @@ const ProductTable: React.FC = () => {
                 className={`${styles.textField} ${styles.inputBaseRoot}`}
               />
                <FormHelperText  style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.quantityAddError ? ProductDetailsAddError.quantityAddError : ' '}</FormHelperText>
-              <p  className={styles.addlabels}>Price</p>
+              <p  className={styles.addlabels}>Price<span className='requiredAsterisk'> *</span></p>
               <TextField
                 size="small"
                 type="number"

@@ -76,7 +76,7 @@ import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
 import { IconBaseProps } from 'react-icons'; // Import IconBaseProps to type the icon prop
 import { ReactElement } from 'react'; // Import ReactElement for more precise typing
-
+import styles from './CartComponents.module.css'
 interface Product {
   productid: string;
   productname: string;
@@ -91,10 +91,10 @@ interface ProductCardProps {
 
 const ProductCardForOrderPage: React.FC<ProductCardProps> = ({ product, icon }) => {
   return (
-    <Card
+    <Card className={styles.scards}
       sx={{
         display: 'flex',
-        flexDirection: 'row', // Change to row to place content on the right
+        flexDirection: 'row', 
         justifyContent: 'space-between',
         height: '100%',
         borderRadius: "20px",
@@ -107,7 +107,7 @@ const ProductCardForOrderPage: React.FC<ProductCardProps> = ({ product, icon }) 
       }}
     >
 
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100px' }}>
+      <div  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100px' }}>
         <div style={{ fontSize: '60px', color: '#3f51b5' }}>
           {icon} 
         </div>
@@ -128,10 +128,10 @@ const ProductCardForOrderPage: React.FC<ProductCardProps> = ({ product, icon }) 
           {product.productname}
         </Typography>
         <Typography variant="body2" sx={{ marginLeft: "0px" }}>
-          <strong style={{ color: "green" }}>In Stock:</strong> {product.quantity}
+          <strong style={{ color: "green" }}>In Stock:</strong>{Number(product.quantity).toLocaleString()}
         </Typography>
         <Typography variant="body2" sx={{ marginTop: 1, marginLeft: "0px" }}>
-          <strong>Price Rs:</strong> {product.price}
+          <strong>Price Rs:</strong> {Number(product.price).toLocaleString()}
         </Typography>
       </CardContent>
     </Card>

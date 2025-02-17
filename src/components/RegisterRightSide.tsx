@@ -19,7 +19,7 @@ const RegisterRightSide = ({ setLogin }: { setLogin: React.Dispatch<React.SetSta
             <Typography variant="body2" sx={{marginBottom:'20px'}} gutterBottom>
                 Already have an account?
             </Typography>
-            <Button variant="outlined" size='large' sx={{color: 'white', border: '2px solid white',borderRadius:'10px'}} onClick={handleLoginPage}><Typography style={{ textTransform: 'none', fontWeight:700 }}>Login</Typography></Button>
+            <Button variant="outlined" size='large' sx={{color: 'white', border: '2px solid white',borderRadius:'10px'}} onClick={handleLoginPage}><Typography style={{ textTransform: 'none', fontWeight:700 }}>Sign in</Typography></Button>
             </Box>
    
     
