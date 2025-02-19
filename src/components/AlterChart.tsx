@@ -25,6 +25,8 @@ const AlterChart = () => {
     "Keyboard": "https://img.icons8.com/?size=100&id=519&format=png&color=000000",
     "Mouse": "https://img.icons8.com/?size=100&id=520&format=png&color=000000",
     "Mobile": "https://img.icons8.com/?size=100&id=UYmVJ09dKuF8&format=png&color=000000",
+    "Bag": "https://img.icons8.com/?size=100&id=21821&format=png&color=000000",
+    "Pen": "https://img.icons8.com/?size=100&id=15027&format=png&color=000000",
   };
 
   useEffect(() => {
@@ -81,7 +83,7 @@ const AlterChart = () => {
 
     let xAxis = chart.xAxes.push(
       am5xy.DateAxis.new(root, {
-        baseInterval: { timeUnit: "minute", count: 1 },
+        baseInterval: { timeUnit: "hour", count: 1 },
         renderer: xRenderer,
         tooltip: am5.Tooltip.new(root, {})
       })
@@ -95,6 +97,7 @@ const AlterChart = () => {
         text: "Created Order",
         x: am5.p50,
         centerX: am5.p50,
+         fontSize:'12px'
       }),
       xAxis.children.length - 1
     );
@@ -122,23 +125,28 @@ const AlterChart = () => {
         text: "Total Order",
         y: am5.p50,
         centerX: am5.p50,
+        fontSize:'12px'
       }),
       0
     );
-    let series = chart.series.push(
-      am5xy.LineSeries.new(root, {
-        xAxis: xAxis,
-        yAxis: yAxis,
-        valueYField: "value",
-        valueXField: "date",
-        maskBullets: false,
-        tooltip: am5.Tooltip.new(root, {
-          pointerOrientation: "vertical", 
-          dy: -20,
-          labelText: "{valueY}"
+
+      let j=-1;
+      
+      let series = chart.series.push(
+        
+        am5xy.LineSeries.new(root, {
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: "value",
+          valueXField: "date",
+          maskBullets: false,
+          tooltip: am5.Tooltip.new(root, {
+            pointerOrientation: "vertical", 
+            dy: -20,
+            labelText: "{product}: {valueY}"
+          })
         })
-      })
-    );
+      );
 
     series.data.processor = am5.DataProcessor.new(root, {
       dateFormat: "yyyy-MM-dd HH:mm",
@@ -158,10 +166,28 @@ const AlterChart = () => {
 
       const product = datas[i].product;
       const iconUrl = productIcons[product] || "https://amcharts.com/wp-content/uploads/assets/timeline/default.svg"; // Default icon if not found
+      const tooltipText = `${product}: {valueY}`;
 
       container.children.push(
         am5.Circle.new(root, { radius: 20, fill: series.get("fill") })
       );
+
+
+      const picture = am5.Picture.new(root, {
+        centerX: am5.p50,
+        centerY: am5.p50,
+        width: 23,
+        height: 23,
+        src: iconUrl,
+      });
+      container.children.push(picture);
+      picture.events.on("pointerover", function () {
+        picture.set("tooltipText", tooltipText); // Set tooltip text on hover
+      });
+
+      picture.events.on("pointerout", function () {
+        picture.set("tooltipText", ""); // Clear tooltip when not hovering
+      });
 
       container.children.push(
         am5.Picture.new(root, {
@@ -169,7 +195,12 @@ const AlterChart = () => {
           centerY: am5.p50,
           width: 23,
           height: 23,
-          src: iconUrl
+          src: iconUrl,
+         tooltip: am5.Tooltip.new(root, {
+            pointerOrientation: "vertical", 
+            dy: -20,
+            labelText:tooltipText
+          })
         })    
       );
 
@@ -196,7 +227,7 @@ const AlterChart = () => {
           top: '50%', 
           left: '50%', 
           transform: 'translate(-50%, -50%)', 
-          fontSize: '20px', 
+          fontSize: '13px', 
           color: 'gray' 
         }}>
           No Orders Available

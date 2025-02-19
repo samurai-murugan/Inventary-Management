@@ -11,9 +11,8 @@ const LeftSide = ({ setLogin }: { setLogin: React.Dispatch<React.SetStateAction<
   
   return (
     <>
-               
+    
             <Box className={styles.leftsidecontainer} sx={{ width: '100%', maxWidth: 500 }}>
-              
             <Typography variant="h4" gutterBottom sx={{ fontWeight:'bold' }}>
             Hello, Welcome!
             </Typography>

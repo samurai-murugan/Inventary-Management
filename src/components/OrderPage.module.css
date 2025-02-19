@@ -2,7 +2,7 @@
 .heading {
     text-align: start;
     margin: 20px;
-    font-size: 20px;
+    font-size: 14px;
     font-weight: bold;
   }
 
@@ -127,16 +127,16 @@
   
   /* Dialog Styles */
   .dialog {
+
     padding: 10px;
     min-width: 500px;
+    height: 700px;
   }
   
-  /* .dialogTitle {
-    width: 500px;
-    font-weight: bold;
-    font-size: 1.25rem;
-    color:rgb(30, 78, 155) !important;
-  } */
+  .dialogTitle {
+   font-family: 'Roboto' !important;
+   font-size: 16px;
+  }
   
   .paragrap p {
     padding-bottom: -15px !important;
@@ -248,7 +248,7 @@
 .labeles {
     /* margin-bottom: -2px; */
     margin: 0px;
-    font-size: 12px;
+    font-size: 13px;
   }
   
   /* Select Input Field */
@@ -258,12 +258,18 @@
   
   .selectsfields {
     width: 99%;
-    height: 40px;
+    height: 38px;
+    font-size: 13px !important;
     /* background-color: gainsboro; */
   }
   .radios{
     background-color: white;
     margin: 0px !important;
+    height: 19px !important;
+  }
+  .radiosLabel span{
+    font-size: 13px !important;
+
   }
   .addlabels {
     margin-bottom: 0px;
@@ -281,7 +287,10 @@
   
 
   .editdailogcontent{
-    margin-top: 3px !important;
+    /* margin-top: 0px 25px !important; */
+    margin-top: -20px !important;
+    margin-bottom: -20px !important;
+    padding: 0px 5px !important;
   }
   .adrresLabels{
     font-size: 13px;
@@ -310,3 +319,42 @@
  .auto{
   width: 99% !important;
  }
+
+ .helperText{
+  font-size: 10px !important;
+ }
+
+ body{
+  font-family: "Roboto";
+ }
+
+ .dai{
+  margin-top:-20px !important;
+  margin-bottom: -20px !important;
+ }
+ .container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+ }
+
+ .labelforview{
+  margin: 0px;
+  padding: 0px;
+  font-size: 13px;
+ }
+
+ .textFields {
+  margin-top: 0px;
+  margin: 0px;
+}
+
+.inputBaseRoots {
+  width: 100%;
+  margin-top: 0px !important;
+  margin-bottom: 8px;
+}
+.viewdailogs{
+  margin-top: -20px;
+  margin-bottom: -20px;
+}

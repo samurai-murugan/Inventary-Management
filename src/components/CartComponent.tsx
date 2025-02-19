@@ -76,7 +76,8 @@ import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
 import { IconBaseProps } from 'react-icons'; // Import IconBaseProps to type the icon prop
 import { ReactElement } from 'react'; // Import ReactElement for more precise typing
-import styles from './CartComponents.module.css'
+
+import styles from './CartComponent.module.css'
 interface Product {
   productid: string;
   productname: string;
@@ -87,11 +88,27 @@ interface Product {
 interface ProductCardProps {
   product: Product;
   icon: ReactElement<IconBaseProps>; // The icon prop now expects a React icon component
+  OpenAdd:()=>void;
+  productname:React.Dispatch<React.SetStateAction<string>>;
+  availabelquantity:React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ProductCardForOrderPage: React.FC<ProductCardProps> = ({ product, icon }) => {
+
+const ProductCardForOrderPage: React.FC<ProductCardProps> = ({ product, icon, OpenAdd,productname,availabelquantity }) => {
+
+  function setProductName(){
+    productname(product.productname);
+    availabelquantity(product.quantity)
+    
+
+  }
   return (
-    <Card className={styles.scards}
+    <div onClick={() => { OpenAdd(); setProductName(); }}> {/* Call both OpenAdd and setProductName */}
+
+     
+    <Card 
+  
+    className={styles.scards}
       sx={{
         display: 'flex',
         flexDirection: 'row', 
@@ -114,7 +131,8 @@ const ProductCardForOrderPage: React.FC<ProductCardProps> = ({ product, icon }) 
       </div>
 
       {/* Product details */}
-      <CardContent
+      <CardContent 
+        
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -123,18 +141,21 @@ const ProductCardForOrderPage: React.FC<ProductCardProps> = ({ product, icon }) 
           backgroundColor: "#ADE8F4",
           padding: '20px',
         }}
+        
       >
-        <Typography variant="body1" sx={{ fontWeight: 'bold', textAlign: "center", marginTop: "0px", marginBottom: "10px", color: 'black' }}>
+        <Typography className={styles.heading} sx={{  textAlign: "center", marginTop: "0px", marginBottom: "10px", color: 'black' ,fontSize:"13px" }}>
           {product.productname}
         </Typography>
-        <Typography variant="body2" sx={{ marginLeft: "0px" }}>
-          <strong style={{ color: "green" }}>In Stock:</strong>{Number(product.quantity).toLocaleString()}
+        <Typography variant="body2" sx={{ marginLeft: "0px",fontSize:"13px" }}>
+          <strong style={{ color: "green" }}>In Stock:</strong>{Number(product.quantity).toLocaleString('en-IN')}
         </Typography>
-        <Typography variant="body2" sx={{ marginTop: 1, marginLeft: "0px" }}>
+        <Typography variant="body2" sx={{ marginTop: 1, marginLeft: "0px",fontSize:"13px"  }}>
           <strong>Price Rs:</strong> {Number(product.price).toLocaleString()}
         </Typography>
       </CardContent>
     </Card>
+    </div>
+
   );
 };
 

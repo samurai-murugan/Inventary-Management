@@ -64,7 +64,8 @@ const BarChart: React.FC = () => {
       rotation: -90,
       centerY: am5.p50,
       centerX: am5.p100,
-      paddingRight: 15
+      paddingRight: 15,
+      fontSize:"13px"
     });
 
     xRenderer.grid.template.setAll({
@@ -81,6 +82,7 @@ const BarChart: React.FC = () => {
         text: "Product",
         x: am5.p50,
         centerX: am5.p50,
+        fontSize:'13px'
       }),
       xAxis.children.length - 1
     );
@@ -105,6 +107,7 @@ const BarChart: React.FC = () => {
         text: "Quantity",
         y: am5.p50,
         centerX: am5.p50,
+        fontSize:'13px'
       }),
       0
     );
@@ -133,7 +136,7 @@ xAxis.get('renderer').grid.template.setAll({
       valueYField: "quantity",
       categoryXField: "product",
       tooltip: am5.Tooltip.new(root, {
-        labelText: "{valueY}"
+        labelText: "{product}:{valueY}"
       })
     }));
 
@@ -161,20 +164,20 @@ xAxis.get('renderer').grid.template.setAll({
   }, [data]);
   return (
 
-    <div style={{ position: 'relative', width: '100%', height: '200px' }}>
+    <div style={{ position: 'relative', width: '100%', height: '350px' }}>
       {data.length === 0 ? (
         <div style={{ 
           position: 'absolute', 
           top: '50%', 
           left: '50%', 
           transform: 'translate(-50%, -50%)', 
-          fontSize: '20px', 
+          fontSize: '14px', 
           color: 'gray' 
         }}>
           No Products Available
         </div>
       ) : (
-        <div id="BarChart" style={{ width: "100%", height: '200px' }}></div>
+        <div id="BarChart" style={{ width: "100%", height: '350px' }}></div>
       )}
     </div>
    

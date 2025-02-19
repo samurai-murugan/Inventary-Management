@@ -1,6 +1,6 @@
 
 .heading{
-  font-size: 23px;
+  font-size: 14px;
   margin-left: 15px;
 }
 /* .tableContainer {
@@ -11,7 +11,7 @@
      font-size: 20px !important;
   }
 
-  .tableHeader {
+  .tableHeader
     background-color:  #a8a8f0;
    
     justify-content: center;
@@ -51,14 +51,15 @@
   
   .dialogTitle {
     width: 500px;
-    font-weight: bold;
-    font-size: 1.25rem;
+    font-weight: 600;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 16px;
     color: #1976d2;
   }
   
  .paragrap p{
     /* padding-bottom: -15px !important; */
-    font-size: 11px;
+    font-size: 13px;
 
  }
 
@@ -169,3 +170,36 @@
   margin-right: 5px;
 
  }
+
+ .labelforview{
+  margin: 0px;
+  padding: 0px;
+  font-size: 13px;
+ }
+
+ .textFields {
+  margin-top: 0px;
+  margin: 0px;
+}
+
+.inputBaseRoots {
+  width: 100%;
+  margin-top: 0px !important;
+  margin-bottom: 12px;
+}
+.viewdailogs{
+  margin-top: 0px !important;
+  padding-bottom: 0px;
+  padding: 0px 24px !important  ;
+}
+
+.addone{
+  margin-top: 0px !important;
+  margin-bottom: -10px !important;
+  padding: 0px 24px !important;
+}
+
+/* table thead tr th{
+  color: white !important;
+  font-size: 13px !important;
+} */

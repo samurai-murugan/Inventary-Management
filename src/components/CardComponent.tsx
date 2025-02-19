@@ -124,14 +124,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, icon }) => {
           
         }}
       >
-        <Typography variant="body1" sx={{ fontWeight: 'bold',textAlign: "center", marginTop: "10px", marginBottom: "10px", color: 'black' }}>
+        <Typography variant="body1" sx={{ textAlign: "center", marginTop: "10px", marginBottom: "10px", color: 'black',fontSize:"13px"  }}>
           {product.product}
         </Typography>
-        <Typography variant="body2" sx={{ marginLeft: "5px" ,textAlign:'left' }}>
+        <Typography variant="body2" sx={{ marginLeft: "5px" ,textAlign:'left',fontSize:"13px"  }}>
           <strong style={{ color: "green" }}>Total Orders:</strong> {Number(product.totalquantity).toLocaleString()}
         </Typography>
-        <Typography variant="body2" sx={{ marginTop: 1, textAlign:'left' ,marginLeft: "5px" }}>
-          <strong>Total Price:</strong> {Number(product.totalprice).toLocaleString()}
+        <Typography variant="body2" sx={{ marginTop: 1, textAlign:'left' ,marginLeft: "5px",fontSize:"13px"  }}>
+          <strong>Total Price:</strong> {Number(product.totalprice).toLocaleString('en-IN')}
         </Typography>
       </CardContent>
     </Card>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, CssBaseline} from '@mui/material';
+import { Backdrop, Box, CssBaseline} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Sidebar from './SideBar';
 import Header from './Header';
@@ -8,6 +8,8 @@ import ProductTable from '../components/Product';
 import OrderPage from "../components/OrderPage";
 import HomePageData from '../components/HomePageData';
 import styles from "./HomePage.module.css"
+import SimpleBackdrop from '../components/Roatating';
+import { toast } from 'react-toastify';
 
 function HomePage() {
   const theme = useTheme();
@@ -17,7 +19,18 @@ function HomePage() {
   const [orderPage, setOrderPage] = React.useState(false);
   const [homePageData, setHomePageData] = React.useState(true);
   const [loading, setLoading] = React.useState(true); // Loading state
+ function login (){
 
+   toast.success('Login Successfull', {
+     position: "top-right",
+     autoClose: 1000,
+     hideProgressBar: false,
+     closeOnClick: true,
+     pauseOnHover: true,
+     draggable: true,
+   });
+ }
+ 
   const handleDrawerToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -28,9 +41,9 @@ function HomePage() {
     setOrderPage(false);
     setHomePageData(false);
     setShowTable(true); 
-    setTimeout(()=>{
-      setLoading(false)
-    },3000)
+    // setTimeout(()=>{
+    //   setLoading(false)
+    // },3000)
   };
 
   const handleProductPage = () => {
@@ -39,40 +52,48 @@ function HomePage() {
     setOrderPage(false);
     setHomePageData(false);
     setProductPage(true); 
-    setTimeout(()=>{
-      setLoading(false)
-    },3000)
+    // setTimeout(()=>{
+    //   setLoading(false)
+    // },3000)
   };
 
   const handleOrderPage = () => {
     setLoading(true);
-  
     setProductPage(false);
     setShowTable(false);
     setHomePageData(false);
     setOrderPage(true);
-    setTimeout(()=>{
-      setLoading(false)
-    },3000)
+    // setTimeout(()=>{
+    //   setLoading(false)
+    // },3000)
   };
 
   const handleHomePage = () => {
-    setLoading(true);
+    // setLoading(true);
   
     setProductPage(false);
     setShowTable(false);
     setOrderPage(false);
     setHomePageData(true);
-    setTimeout(()=>{
-      setLoading(false)
-    },3000)
+
+    // setTimeout(()=>{
+    //   setLoading(false)
+    // },3000)
   };
 
-  React.useEffect(() => {
+  React.useEffect(() => {{login()}
     setTimeout(() => {
+      
       setLoading(false);
+    
     }, 3000);
+
+    
   }, []);
+
+  const handleBackdrop =()=>{
+    setLoading(false);
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -99,35 +120,17 @@ function HomePage() {
         }}
       >
       
-        {loading ? (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              textAlign: 'center',
-              zIndex: 9999,
-            }}
-          >
-           
-            <img
-              src={`${process.env.PUBLIC_URL}/flower.png`} 
-              alt="Loading"
-              
-              className={styles.loadingImage}
-            />
-           
-          </Box>
-        ) : (
+        
+       
          
           <>
-            {showTable && <SettingsTable />}
-            {productpage && <ProductTable />}
-            {orderPage && <OrderPage />}
+            {showTable && <SettingsTable  Backdrop={handleBackdrop}/>}
+            {productpage && <ProductTable BackDrop={handleBackdrop}/>}
+            {orderPage && <OrderPage BackDrop={handleBackdrop} />}
             {homePageData && <HomePageData />}
           </>
-        )}
+         {loading && <SimpleBackdrop Open={loading}></SimpleBackdrop>}
+      
       </Box>
     </Box>
   );

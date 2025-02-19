@@ -11,13 +11,22 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
+import { format } from "path";
+import moment from 'moment';
+interface imagerotation{
+  open:()=> void;
+}
+const RightSide = ({open}:imagerotation) => {
 
-const RightSide = () => {
+
+
   const [userDetailsError, setUserDetailsError] = useState<UserDetailsError>({ userNameError: '', passwordError: '' });
   const [userDetails, setUserDetails] = useState<UserDetailsType>({ userName: '', password: '' });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
-
+   const rotatingmage =()=>{
+    open();
+   }
   const handleLogin = async (event: any) => {
     event.preventDefault();
 
@@ -72,18 +81,22 @@ const RightSide = () => {
           pauseOnHover: true,
           draggable: true,
         });
-
+        const originalDate = new Date();
+       const logindateandtime = moment(originalDate).format('YYYY-MM-DD HH:mm A');
+      
         const { userName, id, role,email } = response.data.user;
         localStorage.setItem('userName', userName);
         localStorage.setItem('userRole', role);
         localStorage.setItem('userId', id);
-        localStorage.setItem("userEmail",email)
+        localStorage.setItem("userEmail",email);
+        localStorage.setItem("loginTime",logindateandtime)
 
         if (role === 'admin') {
           console.log("Admin logged in successfully");
         }
-
+        rotatingmage()
         // setTimeout(() => {
+          
         //   navigate('/homepage');
         // }, 2000);
         navigate('/homepage');
@@ -158,6 +171,25 @@ const RightSide = () => {
 
     // setUserDetails({ userName: '', password: '' });
   };
+  const YettoImplement =()=>{
+    toast.warning("Yet to implement this feature",{
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      // style: {
+      //   color: 'white',  
+      //   fontWeight:'bold',
+      //   font:"Ronoto",
+      //   backgroundColor:'rgb(236, 234, 117)'
+      // }
+    
+      
+
+    })
+  }
 
   const handleInputChange = (field: string, value: string) => {
     setUserDetails(prevState => ({
@@ -180,10 +212,11 @@ const RightSide = () => {
   return (
     <form onSubmit={handleLogin}>
       {/* Toast Container for showing notifications */}
-      <ToastContainer />
+      <ToastContainer  draggablePercent={60}/>
 
       <Box className={styles.RightContainer} sx={{ width: '100%', maxWidth: 500 }}>
-        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+         <Typography variant='h4' gutterBottom sx={{ fontWeight:'bold' ,color:'rgb(118, 173, 235)',marginBottom:'-10px'}}>Inventary Management</Typography>
+        <Typography variant="h4" sx={{ fontWeight: "bold" ,color:'rgb(118, 173, 235)'}}>
           Sign in
         </Typography>
         <Stack direction={"column"} spacing={2} width={"80%"}>
@@ -247,29 +280,29 @@ const RightSide = () => {
         </Typography>
 
         <Stack direction={"row"} spacing={2} className={styles.iconbutton}>
-          <Tooltip title="yet to implement this features" arrow>
-            <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }}>
+          <Tooltip title="Google" arrow>
+            <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }} onClick={YettoImplement} >
               <FcGoogle size={20} />
             </Button>
           </Tooltip>
 
-          {/* <Tooltip title="Facebook" arrow> */}
-          <Tooltip title="yet to implement this features" arrow>
-            <Button variant="outlined" className={styles.IconButton2} sx={{ minWidth: '10px' }}>
+          <Tooltip title="Facebook" arrow>
+          {/* <Tooltip title="yet to implement this features" arrow> */}
+            <Button variant="outlined" className={styles.IconButton2} sx={{ minWidth: '10px' }} onClick={YettoImplement} >
               <FaFacebookF size={20} />
             </Button>
           </Tooltip>
 
-          {/* <Tooltip title="Github" arrow> */}
-          <Tooltip title="yet to implement this features" arrow>
-            <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }}>
+          <Tooltip title="Github" arrow>
+          {/* <Tooltip title="yet to implement this features" arrow> */}
+            <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }} onClick={YettoImplement} >
               <FaGithub size={20} />
             </Button>
           </Tooltip>
 
-          {/* <Tooltip title="LinkedIn" arrow> */}
-          <Tooltip title="yet to implement this features" arrow>
-            <Button variant="outlined" className={styles.IconButton3} sx={{ minWidth: '10px' }}>
+          <Tooltip title="LinkedIn" arrow>
+          {/* <Tooltip title="yet to implement this features" arrow> */}
+            <Button variant="outlined" className={styles.IconButton3} sx={{ minWidth: '10px' }} onClick={YettoImplement} >
               <IoLogoLinkedin size={20} />
             </Button>
           </Tooltip>

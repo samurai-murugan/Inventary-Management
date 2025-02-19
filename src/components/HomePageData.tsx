@@ -169,7 +169,7 @@ import { FaMobileScreen } from "react-icons/fa6";
 import { GiMouse } from "react-icons/gi";
 import { GiLaptop } from "react-icons/gi";
 import { FaHeadphonesSimple } from "react-icons/fa6";
-import { BsFillKeyboardFill } from "react-icons/bs";
+import { BsFillKeyboardFill, BsHandbagFill } from "react-icons/bs";
 
 interface Product {
   orderid: string;
@@ -219,6 +219,8 @@ const HomePageData: React.FC = () => {
         return <FaMobileScreen size={30} color="rgb(199 90 10)"/>;
       case 'headphone':
         return <FaHeadphonesSimple size={30} color="#4caf50" />;
+      case 'bag':
+        return <BsHandbagFill size={30} color="#f44310" />;
       default:
         return <FaBox size={30} color="#9e9e9e" />;
     }
@@ -226,9 +228,9 @@ const HomePageData: React.FC = () => {
 
   return (
     <Box sx={{ marginTop: 2.5, marginLeft: "10px", marginRight: "10px", fontSize: '0.6rem' }}>
-      <Typography sx={{ fontWeight: "bold", fontSize: '20px', marginLeft: "10px" }}>Home Page</Typography>
+      <Typography sx={{ fontWeight: "bold", fontSize: '14px', marginLeft: "10px" }}>Home Page</Typography>
 
-      <Card sx={{ width: '100%', boxShadow: 'none', border: 'none', marginRight: '10px', paddingRight: '30px' }}>
+      <Card sx={{ width: '100%', boxShadow: 'none', border: 'none', marginRight: '10px', paddingRight: '30px' ,height:"450px"}}>
         <CardContent sx={{ marginLeft: 1 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={6}>
@@ -236,7 +238,7 @@ const HomePageData: React.FC = () => {
                   transform: 'scale(1.01)', boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.2)', cursor: 'pointer',
                 }}}>
                 <CardContent>
-                  <Typography sx={{ fontWeight: 'bold' }}>Product Price Details</Typography>
+                  <Typography sx={{ fontFamily:"Roboto" ,fontSize:'14px'}}>Product Price Details</Typography>
                   <DonutChart />
                 </CardContent>
               </Card>
@@ -246,7 +248,7 @@ const HomePageData: React.FC = () => {
                   transform: 'scale(1.01)', boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.2)', cursor: 'pointer',
                 }}}>
                 <CardContent>
-                  <Typography sx={{ fontWeight: 'bold' }}>Product Quantity Details</Typography>
+                  <Typography sx={{ fontFamily:"Roboto",fontSize:'14px' }}>Product Quantity Details</Typography>
                   <BarChart />
                 </CardContent>
               </Card>
@@ -254,7 +256,15 @@ const HomePageData: React.FC = () => {
           </Grid>
         </CardContent>
       </Card>
-
+      <Grid container spacing={1} sx={{ marginTop: 3 }}>
+        {productDetails.map((product) => {
+          return (
+            <Grid item xs={12} sm={8} md={2.7} key={product.orderid} sx={{ marginBottom: 3 ,marginLeft:"20px",}}>
+              <ProductCard product={product} icon={getIcon(product.product)} />
+            </Grid>
+          );
+        })}
+      </Grid>
       {loginperson === 'admin' &&
         <Card sx={{
           width: '98%',
@@ -276,15 +286,7 @@ const HomePageData: React.FC = () => {
         </Card>
       }
 
-      <Grid container spacing={1} sx={{ marginTop: 3 }}>
-        {productDetails.map((product) => {
-          return (
-            <Grid item xs={12} sm={8} md={2.7} key={product.orderid} sx={{ marginBottom: 3 ,marginLeft:"20px",}}>
-              <ProductCard product={product} icon={getIcon(product.product)} />
-            </Grid>
-          );
-        })}
-      </Grid>
+     
     </Box>
   );
 };

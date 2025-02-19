@@ -1,18 +1,24 @@
-body {
+body{
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  /* -webkit-font-smoothing: antialiased; */
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    sans-serif; */
+  font-family:'Roboto' !important;
+  /* -moz-osx-font-smoothing: grayscale; */
   /* background-color: rgb(152, 196, 247); */
   background-color: white;
 }
 
-code {
+*{
+  font-family: 'Roboto', sans-serif ;
+
+}
+
+/* code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
+} */
 
 .mainButton{
   color:white !important;
@@ -21,7 +27,7 @@ code {
   /* font-size: 0.9rem !important ; */
 }
 .mainButton p{
-  font-size: 0.9rem !important ;
+  font-size: 0.8rem !important ;
 }
 .mainButton:hover{
   background-color:rgb(30, 78, 155) !important;
@@ -29,13 +35,70 @@ code {
 
 .dialogTitle {
   width: 500px !important;
-  font-weight: bold;
-  font-size: 1.25rem;
+  /* font-weight: bold; */
+  
   color:rgb(30, 78, 155) !important;
-  font-size: 18px;
+  font-size: 14px !important;
   font-weight: 600;
 }
 
 .requiredAsterisk {
   color: red;
 }
+
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingImage {
+  animation: rotate 2s infinite ease-in-out;
+  width: 100px;
+  height: 100px;
+}
+
+.deltecontent{
+  font-size: 13px;
+  padding: 0px 24px !important;
+}
+input{
+  font-size: 14px !important;
+}
+ul ui{
+  font-size: 13px !important;
+  padding: 5px !important;
+}
+
+
+
+
+.menuItem {
+  font-size: 13px !important; 
+  padding: 8px 16px;
+  cursor: pointer;
+  list-style-type: none;
+}
+
+.menuItem:hover {
+  background-color: #f0f0f0; /* Add a hover effect */
+}
+
+
+.closearrow{
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+ }
+
+ .closearrow button{
+  margin-right: 5px;
+
+ }

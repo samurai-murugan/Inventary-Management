@@ -3,7 +3,7 @@
 .heading {
   text-align: start;
   margin: 20px;
-  font-size: 20px;
+  font-size: 14px;
   font-weight: bold;
   
 }
@@ -76,18 +76,20 @@
 
 .dialog {
   padding: 20px;
+  padding-bottom: 0px !important;
+
 }
 
 .dialogTitle {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
 }
 
-.paragrap {
+/* .paragrap {
   display: flex;
   flex-direction: column;
 
-}
+} */
 
 .textField {
   margin: 0px;
@@ -142,7 +144,7 @@
 /* dailog */
 
 .dialog {
-  padding: 10px;
+  /* padding: 10px; */
   min-width: 500px;
   
 }
@@ -151,16 +153,16 @@
  
 .dialogTitle {
   width: 500px;
-  font-weight: bold;
-  font-size: 1.25rem;
+  /* font-weight: bold; */
+  /* font-size: 1.25rem; */
   color: #1976d2;
 }
 
 
  
-.paragrap p{
+/* .paragrap p{
   padding-bottom: -15px !important;
-  font-size: 12px;
+  font-size: 13px !important;
 
 }
 
@@ -169,7 +171,7 @@ margin-bottom: 9px;
 }
 .paragrap p div{
   width: 500px;
-}
+} */
 .textField {
   /* margin-top: -12px;
   margin-bottom: 12px; */
@@ -265,7 +267,7 @@ margin-bottom: 9px;
   color: red !important;
 }
 
- .paragrap p div{
+ /* .paragrap p div{
     width: 500px;
   }
 
@@ -273,12 +275,12 @@ margin-bottom: 9px;
     padding-bottom: -15px !important;
     font-size: 12px;
 
- }
+ } */
 
   div .labeles{
     /* margin-bottom: -1px; */
     margin: 0px;
-    font-size: 12px;
+    font-size: 13px;
   }
    
 
@@ -294,6 +296,7 @@ margin-bottom: 9px;
 
  .addlabels{
   margin-bottom: 0px;
+  font-size: 12px !important;
  }
 
  .closearrow{
@@ -320,4 +323,38 @@ margin-bottom: 9px;
 
 .auto{
   width: 98% !important;
+}
+
+.labelforview{
+  margin: 0px;
+  padding: 0px;
+  font-size: 13px;
+ }
+
+ .textFields {
+  margin-top: 0px;
+  margin: 0px;
+}
+
+.inputBaseRoots {
+  width: 100%;
+  margin-top: 0px !important;
+  margin-bottom: 12px;
+}
+
+.viewdailogs{
+  margin-top: 0px!important;
+  padding: 0px 24px !important;
+ 
+}
+.edit{
+ 
+  padding-bottom: 0px;
+  padding: 0px 24px !important;
+  margin-bottom: -7px;
+}
+.addone{
+  padding-bottom: 0px;
+  padding: 0px 24px !important;
+  margin-bottom: -7px;
 }

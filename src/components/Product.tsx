@@ -13,9 +13,11 @@ import {
   type MRT_ColumnDef,
 } from 'material-react-table';
 import { toast, ToastContainer } from 'react-toastify';
+interface BackDrop{
+  BackDrop:()=>void;
+}
 
-
-const ProductTable: React.FC = () => {
+const ProductTable: React.FC<BackDrop> = ({BackDrop}) => {
   const [open, setOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
   const [editOpen, setEditOpen] = React.useState(false);
@@ -49,15 +51,18 @@ const ProductTable: React.FC = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get('http://localhost:5000/product/allproducts');
+
       setRows(response.data.products);
+      BackDrop()
     } catch (error) {
+      BackDrop()
       console.error('Error fetching products:', error);
     }
   };
 
   React.useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [BackDrop]);
 
   const handleAddProductDialogOpen = () => {
     setAddProductOpen(true);
@@ -75,8 +80,8 @@ const ProductTable: React.FC = () => {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    console.log("Updated Field: ", field, " New Value: ", value);
-    console.log("new Product===>", field,value)
+    // console.log("Updated Field: ", field, " New Value: ", value);
+    // console.log("new Product===>", field,value)
     setNewProduct((prevState) => ({
       ...prevState,
       [field]: value,
@@ -128,20 +133,24 @@ const ProductTable: React.FC = () => {
   };
 
   const handleEditDialogOpen = (product: any) => {
-    console.log('Opening edit dialog for:', product);
-    console.log('Opening edit dialog for:', product);
+    // console.log('Opening edit dialog for:', product);
+    // console.log(newQuantity,'before ')
+    // setNewQuantity('')
+    // console.log('Opening edit dialog for:', product);
     setSelectedProduct(product);
     setNewName(product.productname);
     setNewQuantity(product.quantity);
+    // console.log("product qunaity",product.quantity,'new',newQuantity)
     setNewPrice(product.price);
+    
     setEditOpen(true);
   };
 
   const handleEditSubmit = async () => {
 
-    console.log('Submitting:', { newName, newQuantity, newPrice });
+    // console.log('Submitting:', { newName, newQuantity, newPrice });
     let isValid = true;
-      console.log(newName,'newon')
+      // console.log(newName,'newon')
     if (newName.trim() === '') {
       setEditProductDetailsError((prevState) => ({
         ...prevState,
@@ -149,28 +158,36 @@ const ProductTable: React.FC = () => {
       }));
       isValid = false;
     }
-    if (newQuantity.trim() === '' || isNaN(Number(newQuantity))) {
+    if (newQuantity.trim() === '') {
       setEditProductDetailsError((prevState) => ({
         ...prevState,
         quantityError: 'Quantity should be a valid number.',
       }));
       isValid = false;
-    }else if(Number(newQuantity)<0)
+    }else if(Number(newQuantity) <= 0){
+      setEditProductDetailsError((prevState) => ({
+        ...prevState,
+        quantityError: 'Quantity should be a greaterthan 0.',
+      }));
+      isValid = false;
+    }
     if (newPrice.trim() === '' || isNaN(parseFloat(newPrice))) {
+      console.log("NOt valid price")
       setEditProductDetailsError((prevState) => ({
         ...prevState,
         priceError: 'Price should be a valid number.',
       }));
       isValid = false;
-    }
+    }   
 
     if (isValid) {
+      let number = parseInt(newQuantity.replace(/,/g, ''));
       try {
-        console.log(newName, newQuantity, newPrice)
+        // console.log(newName, newQuantity, newPrice)
         setLoading(true);
       const response= await axios.put(`http://localhost:5000/product/updateproduct/${selectedProduct.id}`, {
           productname: newName,
-          quantity: newQuantity,
+          quantity: number,
           price: parseInt(newPrice),
         });
         if(response.status ===200){
@@ -194,6 +211,10 @@ const ProductTable: React.FC = () => {
         fetchProducts();
         setEditOpen(false);
         setLoading(false);
+        setNewQuantity('');
+        setNewName('');
+        setNewPrice('');
+        
       } catch (error) {
         console.error('Error updating product:', error);
         setLoading(false);
@@ -210,8 +231,12 @@ const ProductTable: React.FC = () => {
   };
 
   const handleCloseEditDialog = () => {
+    setNewQuantity('')
+     setNewName('')
+     setNewPrice('')
     setEditOpen(false);
-    setEditProductDetailsError({
+   
+        setEditProductDetailsError({
       productnameError: '',
       quantityError: '',
       priceError: '',
@@ -247,7 +272,7 @@ const ProductTable: React.FC = () => {
 
     if (isValid) {
       try {
-   console.log("valid the addd", newProduct.name)
+  //  console.log("valid the addd", newProduct.name)
         setLoading(true);
         const response = await axios.post('http://localhost:5000/product/addProduct', {
           productname: newProduct?.name,
@@ -266,9 +291,9 @@ const ProductTable: React.FC = () => {
        
         }
 
-        console.log(response.data)
+        // console.log(response.data)
         const product = response.data.newProduct
-        console.log(product)
+        // console.log(product)
         // const newProductData = response.data.product;
       
         // Add the new product to the table rows
@@ -300,11 +325,7 @@ const ProductTable: React.FC = () => {
       accessorKey: 'productname',
       header: 'Product Name',
     },
-    {
-      accessorKey: 'productAddedDate',
-      header: 'Product_Added_date',
-      size:130,
-    },
+   
     {
       accessorKey: 'quantity',
       header: 'Quantity',
@@ -322,6 +343,11 @@ const ProductTable: React.FC = () => {
         align:"right",
 
       }
+    },
+    {
+      accessorKey: 'productAddedDate',
+      header: 'Product_Added_date',
+      size:130,
     },
     {
       accessorKey: 'actions',
@@ -364,11 +390,14 @@ const ProductTable: React.FC = () => {
       sx: {
         border: '1px solid gray',
         backgroundColor: 'rgb(30, 78, 155)',
+        fontSize:'13px',
+        color:"white"
       },
     },
     muiTableBodyCellProps: {
       sx: {
         border: '1px solid gray',
+        fontSize:'13px'
       },
     },
   });
@@ -385,6 +414,10 @@ const ProductTable: React.FC = () => {
                <MaterialReactTable table={tabel} />
              </div>
 
+
+   
+
+
         {/* View Product Dialog */}
         <Dialog open={open} onClose={handleClose} className={styles.dialog}>
           <Box className={styles.closearrow}>
@@ -395,14 +428,47 @@ const ProductTable: React.FC = () => {
             </IconButton>
           </Box>
 
-          <DialogContent>
-            {selectedProduct && (
+            {/* {selectedProduct && (
               <div>
-                <p><strong>Product Name:</strong> {selectedProduct.productname}</p>
-                <p><strong>Quantity:</strong> {selectedProduct.quantity}</p>
-                <p><strong>Price:</strong> {selectedProduct.price}</p>
+              <p><strong>Product Name:</strong> {selectedProduct.productname}</p>
+              <p><strong>Quantity:</strong> {selectedProduct.quantity}</p>
+              <p><strong>Price:</strong> {selectedProduct.price}</p>
               </div>
-            )}
+            )} */}
+              <DialogContent className={styles.viewdailogs}>
+             <p className={styles.labelforview}>Product</p>
+             <TextField
+              size="small"
+              value={selectedProduct?.productname}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+             <p className={styles.labelforview}>Quantity</p>
+             <TextField
+              size="small"
+              value={selectedProduct?.quantity}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+             <p className={styles.labelforview}>Price</p>
+             <TextField
+              size="small"
+              value={selectedProduct?.price}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="primary" className="mainButton"><Typography textTransform={'none'}>Close</Typography></Button>
@@ -410,7 +476,7 @@ const ProductTable: React.FC = () => {
         </Dialog>
 
         {/* Delete Product Dialog */}
-        <Dialog open={deleteOpen} onClose={handleCloseDeleteDialog} className={styles.dialog}>
+        <Dialog open={deleteOpen} onClose={handleCloseDeleteDialog} >
 
         <Box className={styles.closearrow}>
           <DialogTitle  className='dialogTitle'>Delete Confirm</DialogTitle>
@@ -419,10 +485,10 @@ const ProductTable: React.FC = () => {
                      <CloseIcon />
                 </IconButton> 
           </Box>
-          <DialogContent>
+          <DialogContent className='deltecontent'>
             {selectedProduct && (
-              <div>
-                <p><strong>Are you sure you want to delete this product?</strong> {selectedProduct.productname}</p>
+              <div >
+                <p><strong>Are you sure you want to delete this product?</strong> {selectedProduct?.productname}</p>
               </div>
             )}
           </DialogContent>
@@ -432,6 +498,8 @@ const ProductTable: React.FC = () => {
           </DialogActions>
         </Dialog>
 
+
+
         {/* Edit Product Dialog */}
         <Dialog open={editOpen} onClose={handleCloseEditDialog} className={styles.dialog}>
           <Box className={styles.closearrow}>
@@ -440,7 +508,7 @@ const ProductTable: React.FC = () => {
                      <CloseIcon />
                 </IconButton> 
           </Box>
-          <DialogContent >
+          <DialogContent className={styles.edit} >
             {selectedProduct && (
               <div className={styles.editdailogcontent}>
                 <p className={styles.labeles}>Product Name<span className='requiredAsterisk'> *</span></p>
@@ -462,9 +530,9 @@ const ProductTable: React.FC = () => {
                 <TextField
                   size="small"
                   value={newQuantity}
-                  onChange={(e) => setNewQuantity(e.target.value)}
+                  onChange={(e) => setNewQuantity((e.target.value))}
                   className={`${styles.textField} ${styles.inputBaseRoot}`}
-                  type='number'
+                  
                   InputProps={{ inputProps: { min: 0,step: 1 } }}
                  />
                 <FormHelperText style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
@@ -496,7 +564,7 @@ const ProductTable: React.FC = () => {
                      <CloseIcon />
                 </IconButton> 
           </Box>
-          <DialogContent>
+          <DialogContent className={styles.addone}>
             <div className={styles.paragrap}>
               <p className={styles.addlabels}>Product Name<span className='requiredAsterisk'> *</span></p>
 
@@ -520,7 +588,7 @@ const ProductTable: React.FC = () => {
           freeSolo  // Allows custom input
           renderInput={(params) => <TextField {...params} size="small" onChange={(e) => handleInputChange('name',e.target.value)} />}
         />
-           <FormHelperText  style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.productnameAddError ? ProductDetailsAddError.productnameAddError : ' '}</FormHelperText>
+           <FormHelperText  style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '10px !important' }}>{ProductDetailsAddError.productnameAddError ? ProductDetailsAddError.productnameAddError : ' '}</FormHelperText>
               <p className={styles.addlabels}>Quantity<span className='requiredAsterisk'> *</span></p>
               <TextField
                 size="small"
@@ -528,6 +596,7 @@ const ProductTable: React.FC = () => {
                 value={newProduct.quantity}
                 onChange={(e) => handleInputChange('quantity', e.target.value)}
                 className={`${styles.textField} ${styles.inputBaseRoot}`}
+                inputProps={{min:0}}
               />
                <FormHelperText  style={{ marginTop: "-2px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>{ProductDetailsAddError.quantityAddError ? ProductDetailsAddError.quantityAddError : ' '}</FormHelperText>
               <p  className={styles.addlabels}>Price<span className='requiredAsterisk'> *</span></p>

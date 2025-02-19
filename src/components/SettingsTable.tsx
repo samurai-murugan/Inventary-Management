@@ -16,7 +16,11 @@ import { edituserDetailError } from '../Interface/Login.interface';
 import styles from './SettingsTable.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 
-const SettingsTable: React.FC = () => {
+interface BackDrop{
+  Backdrop:()=>void;
+}
+
+const SettingsTable:React.FC<BackDrop>= ({Backdrop}) => {
   const [open, setOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
   const [editOpen, setEditOpen] = React.useState(false);
@@ -32,7 +36,12 @@ const SettingsTable: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
+      Backdrop();
       const response = await axios.get('http://localhost:5000/users/users/');
+      setTimeout(()=>{
+        Backdrop();
+        
+      },6000)
       setRows(response.data); 
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -41,7 +50,7 @@ const SettingsTable: React.FC = () => {
 
   React.useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [Backdrop]);
 
   const columns = useMemo<MRT_ColumnDef<any>[]>(() => [
     {
@@ -139,9 +148,16 @@ const SettingsTable: React.FC = () => {
   const handleDelete = async () => {
     if (selectedUser) {
       try {
-        setLoading(true);
-      const response=  await axios.delete(`http://localhost:5000/users/users/${selectedUser.id}`);
+       
+     
+         Backdrop()
+         await new Promise(resolve => setTimeout(resolve, 50));
 
+       const response=  await axios.delete(`http://localhost:5000/users/users/${selectedUser.id}`);
+        
+       
+        
+         
          if(response.status ===200){
                   toast.success(response.data.message, {
                     position: "top-right",
@@ -155,8 +171,10 @@ const SettingsTable: React.FC = () => {
                 }
         setRows((prevRows) => prevRows.filter((row) => row.id !== selectedUser.id));
         setDeleteOpen(false);
+        Backdrop()
         setLoading(false);
       } catch (error) {
+        Backdrop()
         console.error('Error deleting user:', error);
         setLoading(false);
       }
@@ -165,7 +183,9 @@ const SettingsTable: React.FC = () => {
 
   // Accept user (mark as verified)
   const handleAccept = async (id: string) => {
+
     try {
+      Backdrop();
       const response = await axios.put(`http://localhost:5000/users/users/verify/${id}`, { isVerified: true });
       if (response.status === 200) {
         console.log("verify  toasting",)
@@ -184,9 +204,11 @@ const SettingsTable: React.FC = () => {
             row.id === id ? { ...row, is_verified: true } : row
           )
         );
-        fetchUsers();
+        Backdrop();
+        // fetchUsers();
       }
     } catch (error) {
+      Backdrop();
       console.error('Error accepting user:', error);
     }
   };
@@ -202,13 +224,17 @@ const SettingsTable: React.FC = () => {
   // Open edit user dialog and fetch user details
   const handleEditDialogOpen = async (user: any) => {
     setSelectedUser(user);
+    console.log(user,'UserData')
     const id = user.id;
     try {
+      Backdrop();
       const response = await axios.get(`http://localhost:5000/users/usersData/${id}`);
       const userData = response.data;
       setNewFirstName(userData.firstname);
       setNewLastName(userData.lastname);
+      // setNewQuantity(userData.quantity)
       setEditOpen(true);
+      Backdrop();
     } catch (error) {
       console.error('Error fetching user details for edit:', error);
     }
@@ -284,15 +310,17 @@ const SettingsTable: React.FC = () => {
     muiTableHeadCellProps :{
     sx : {
       border : '1px solid gray',
-      backgroundColor: 'rgb(30, 78, 155)',
+      backgroundColor: 'rgb(30, 78, 155)', 
+       fontSize:"13px !important" ,
+       color:'white !important'
     }
-    
-
+     
     },
+  
     muiTableBodyCellProps: {
       sx :{
         border : '1px solid gray',
-       
+       fontSize:'13px'
       }
     } // data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
   });
@@ -313,7 +341,59 @@ const SettingsTable: React.FC = () => {
             <CloseIcon />
           </IconButton>
         </Box>
-        <DialogContent>
+
+        <DialogContent className={styles.viewdailogs}>
+             <p className={styles.labelforview}>Product</p>
+             <TextField
+              size="small"
+              value={selectedUser?.userName}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+             <p className={styles.labelforview}>Quantity</p>
+             <TextField
+              size="small"
+              value={selectedUser?.email_id}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+             <p className={styles.labelforview}>Price</p>
+             <TextField
+              size="small"
+              value={selectedUser?.role}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+             <p className={styles.labelforview}>Price</p>
+             <TextField
+              size="small"
+              value={selectedUser?.is_verified ? 'Verified' : 'Not Verified'}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+         
+             
+
+         
+          </DialogContent>
+        
+        {/* <DialogContent>
           {selectedUser && (
             <div>
               <p><strong>Username:</strong> {selectedUser.userName}</p>
@@ -322,7 +402,7 @@ const SettingsTable: React.FC = () => {
               <p><strong>isVerified:</strong> {selectedUser.is_verified ? 'Verified' : 'Not Verified'}</p>
             </div>
           )}
-        </DialogContent>
+        </DialogContent> */}
         <DialogActions>
           <Button onClick={handleClose} color="primary" className="mainButton">
             <Typography textTransform={'none'}>Close</Typography>
@@ -333,12 +413,12 @@ const SettingsTable: React.FC = () => {
       {/* Delete Confirm Dialog */}
       <Dialog open={deleteOpen} onClose={handleCloseDeleteDialog} className={styles.dialog}>
         <Box className={styles.closearrow}>
-          <DialogTitle className={styles.dialogTitle}>Delete Confirm</DialogTitle>
+          <DialogTitle className='dialogTitle'>Delete Confirm</DialogTitle>
           <IconButton onClick={handleCloseDeleteDialog}>
             <CloseIcon />
           </IconButton>
         </Box>
-        <DialogContent>
+        <DialogContent className='deltecontent'>
           {selectedUser && (
             <div>
               <p><strong>Are you sure you want to delete this user?</strong> {selectedUser.userName}</p>
@@ -358,12 +438,12 @@ const SettingsTable: React.FC = () => {
       {/* Edit User Dialog */}
       <Dialog open={editOpen} onClose={handleCloseEditDialog} className={styles.dialog}>
         <Box className={styles.closearrow}>
-          <DialogTitle className={styles.dialogTitle}>Edit User</DialogTitle>
+          <DialogTitle className="dialogTitle">Edit User</DialogTitle>
           <IconButton onClick={handleCloseEditDialog}>
             <CloseIcon />
           </IconButton>
         </Box>
-        <DialogContent>
+        <DialogContent className={styles.addone}>
           {selectedUser && (
             <div className={styles.paragrap}>
               <p className={styles.labeles}>Email<span className='requiredAsterisk'> *</span></p>

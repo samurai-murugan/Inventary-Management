@@ -17,7 +17,7 @@ import OrderPageCartCard from './OrderPageCartCard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 interface ProductPriceDetails{
-  [key: string]: string;  // This allows dynamic string keys to access prices (as strings)
+  [key: string]: string;  
 
 }
 
@@ -39,7 +39,11 @@ interface Product {
   price: string;
   quantity: string;
 }
-const OrderTable: React.FC = () => {
+
+interface BackDrop{
+  BackDrop:() =>void;
+}
+const OrderTable: React.FC<BackDrop> = ({BackDrop}) => {
 
   const [open, setOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
@@ -56,9 +60,11 @@ const OrderTable: React.FC = () => {
   const [productPrice,setProductPrice]= React.useState<ProductPriceDetails| null>(null)
   const[productDropDown,setProductDropDown] = React.useState<string[]>([])
   const userId = localStorage.getItem('userId');
- const [productDetails, setProductDetails] = React.useState<Product[]>([]);
+//  const [productDetails, setProductDetails] = React.useState<Product[]>([]);
+
 
  const [availabelQuantity,setAvailabelQuantity]= React.useState<[]>([])
+ const [availabelQuantityforAdd,setAvailabelQuantityforAdd]= React.useState<string>('')
   // const [userOrderDetails,setUserOrderDetails]= React.useState<any[]>([])
 
   let loginperson = localStorage.getItem('userRole')
@@ -80,10 +86,12 @@ const OrderTable: React.FC = () => {
 React.useEffect(() => {
   const fetchProductPrices = async () => {
     try {
+     
       const response = await fetch('http://localhost:5000/product/product-prices');
-
-      console.log('respons',response)
+      BackDrop();
+      // console.log('respons',response)
       if (!response.ok) {
+        BackDrop();
         throw new Error('Failed to fetch product prices');
       }
       const data: ProductPriceDetails = await response.json();
@@ -96,21 +104,21 @@ React.useEffect(() => {
   };
 
   fetchProductPrices();
-}, []);
+}, [BackDrop]);
 // for the availabel quantity
-  React.useEffect(() => {
-    const fetchCardDataForCarts = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/productsData/cartData`);
-        const data: Product[] = await response.json();
-        setProductDetails(data);
-      } catch (error) {
-        console.error('Error fetching product data:', error);
-      }
-    };
+  // React.useEffect(() => {
+  //   const fetchCardDataForCarts = async () => {
+  //     try {
+  //       const response = await fetch(`http://localhost:5000/productsData/cartData`);
+  //       const data: Product[] = await response.json();
+  //       setProductDetails(data);
+  //     } catch (error) {
+  //       console.error('Error fetching product data:', error);
+  //     }
+  //   };
 
-    fetchCardDataForCarts();
-  }, [rows]);
+  //   fetchCardDataForCarts();
+  // }, [rows]);
 
 
 React.useEffect(()=>{
@@ -119,7 +127,7 @@ React.useEffect(()=>{
 
       const response = await axios.get('http://localhost:5000/product/productsName');
       const data = response.data;
-      console.log(data)
+      // console.log(data)
       setProductDropDown(data);
     }
     catch(error){
@@ -133,14 +141,14 @@ const fetchOrders = async () => {
   try {
       let response;
       if(loginperson ==='admin'){
-       console.log("adminOrder====>"  )
+      //  console.log("adminOrder====>"  )
          response = await axios.get('http://localhost:5000/orders/allorders');
       }
       else {
         response = await axios.get(`http://localhost:5000/orders/allUserOrders/${userid}`);
       }
 
-      console.log(response.data.orders)
+      // console.log(response.data.orders)
       setRows(response.data.orders);
       // console.log(response.data.orders.orderid)
     } catch (error) {
@@ -164,7 +172,8 @@ const fetchOrders = async () => {
     setNewPaymentMethod('');
     setNewAddress('');
     setTotalPrice(0);
-     
+    setAvailabelQuantityforAdd('');
+  
      
     setAddingOrderError({
       productAddError:'',
@@ -176,13 +185,21 @@ const fetchOrders = async () => {
 
   
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange =async (field: string, value: string) => {
+    // let productname ;
 
+    if (field === 'product') {
+      setNewProduct(value);
+    }
 
-    if (field === 'product') setNewProduct(value);
+    try {
+
     if (field === 'quantity') setNewQuantity(value);
     if (field === 'paymentMethod') setNewPaymentMethod(value);
     if (field === 'address') setNewAddress(value);
+    }catch(error){
+      console.log('error adding fetcing quanity',error);
+    }
   };
 
   const handleView = (order: any) => {
@@ -222,15 +239,33 @@ const fetchOrders = async () => {
     }
   };
 
-  const handleEditDialogOpen = (order: any) => {
+  const handleEditDialogOpen = async (order: any) => {
+
+    try {
+     
+      const response = await fetch(`http://localhost:5000/product/QuantityAndName/${order.product}`);
+      const data = await response.json();
+      console.log("data for quantity",data);
+      if (response.ok) {
+       
+        setAvailabelQuantity(data[0].quantity);
+
+        console.log("availabele quantity", availabelQuantity)
+      } else {
+        console.error('Failed to fetch available quantity');
+      }
+   
     setSelectedOrder(order);
-    
+
     setNewProduct(order.product);
     setNewQuantity(order.quantity);
     setNewPaymentMethod(order.paymentMethod);
     setNewAddress(order.address);
     setEditOpen(true);
-  };
+  } catch (error) {
+    console.error('Error fetching available quantity:', error);
+  }
+};
 
   const handleEditSubmit = async () => {
     let isValid = true;
@@ -300,11 +335,18 @@ const fetchOrders = async () => {
         setRows((prevRows) =>
           prevRows.map((row) =>
             row.id === selectedOrder.id
-              ? { ...row, product: newProduct, quantity: Number(newQuantity), paymentMethod: newPaymentMethod, address: newAddress }
+              ? {product: newProduct, quantity: Number(newQuantity), paymentMethod: newPaymentMethod, address: newAddress, ...row }
               : row
           )
         );
         fetchOrders();
+        setOpen(false);
+        setAddOrderOpen(false);
+        setNewProduct('');
+        setNewQuantity('');
+        setNewPaymentMethod('');
+        setNewAddress('');
+        setAvailabelQuantity([])
         setEditOpen(false);
         setLoading(false);
       } catch (error) {
@@ -351,12 +393,13 @@ const fetchOrders = async () => {
     setNewPaymentMethod('');
     setNewAddress('');
   };
-
+  
   const handleCloseDeleteDialog = () => {
     setDeleteOpen(false);
   };
-
+  
   const handleCloseEditDialog = () => {
+    setAvailabelQuantity([])
     setEditOpen(false);
     setAddOrderOpen(false);
     setNewProduct('');
@@ -392,11 +435,19 @@ const fetchOrders = async () => {
   ))
       isValid = false;
     }
+    if(Number(newQuantity) <= 0){
+      setAddingOrderError((prevState)=>({
+        ...prevState,
+        quantityAddError:"Quantity is greater than 0",
+      }))
+      isValid = false;
+
+    }
 
     if (newPaymentMethod.trim() === '') {
       setAddingOrderError((prevState)=>({
         ...prevState,
-        paymenentmethodAddError:"PaymentMethod is required",
+        paymenentmethodAddError:"Payment Method is required",
       }
   ))
       isValid = false;
@@ -409,6 +460,23 @@ const fetchOrders = async () => {
       }
   ))
       isValid = false;
+    }
+    if(availabelQuantityforAdd ==='0'){
+      isValid=false;
+      toast.warning("Product will available soon!", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        // style: {
+        //   color: 'white',  
+        //   fontWeight:'bold',
+        //   backgroundColor:'rgb(233, 229, 34)'
+        // }
+      })
+
     }
 
     if (isValid) {
@@ -423,6 +491,7 @@ const fetchOrders = async () => {
         });
     console.log(response.status,"Status for Add order")
     if(response.status ===201){
+      setAvailabelQuantityforAdd('');
       toast.success("Order successful!", {
         position: "top-right",
         autoClose: 1000,
@@ -431,18 +500,14 @@ const fetchOrders = async () => {
         pauseOnHover: true,
         draggable: true,
       });
-    }
-    
-      
-   
-    
-        console.log(response.data.orders)
+      console.log(response.data.orders)
         setAddOrderOpen(false);
         setLoading(false);
         setNewProduct('');
         setNewQuantity('');
         setNewPaymentMethod('');
         setNewAddress('');
+        setAvailabelQuantityforAdd('');
         setTotalPrice(0)
         setAddingOrderError({
           productAddError:'',
@@ -451,27 +516,35 @@ const fetchOrders = async () => {
           addressAddError:'',
           
         })
+    }
+    
+      
+   
+    
+        
 
 
         fetchOrders();
       } catch (error) {
         if(error instanceof AxiosError){
-          if(error.response?.status === 400){
+          // if(error.response?.status === 400){
 
-            toast.error("Order already exist!", {
-              position: "top-right",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              style: {
-                backgroundColor: "white", 
-                color: "crimson", 
-              }
-            });
-          }else if(error.response?.status === 404){
-            toast.success("Product not availabel!", {
+          //   toast.error("Order already exist!", {
+          //     position: "top-right",
+          //     autoClose: 1000,
+          //     hideProgressBar: false,
+          //     closeOnClick: true,
+          //     pauseOnHover: true,
+          //     draggable: true,
+          //     style: {
+          //       backgroundColor: "white", 
+          //       color: "crimson", 
+          //     }
+          //   });
+          // }
+          
+         if(error.response?.status === 404){
+            toast.warning("Product not availabel!", {
               position: "top-right",
               autoClose: 1000,
               hideProgressBar: false,
@@ -489,6 +562,7 @@ const fetchOrders = async () => {
               pauseOnHover: true,
               draggable: true,
             })
+           
             return;
           }
         }
@@ -496,12 +570,40 @@ const fetchOrders = async () => {
         setLoading(false);
       }
       finally{
+        setTotalPrice(0)
        
-
         fetchOrders();
       }
     }
   };
+
+ const handleclick=async(event:any)=>{
+
+  const  productname = event.currentTarget.dataset.myvalue;
+  console.log("menu item",productname)
+ 
+  
+  try {
+      
+    const response = await fetch(`http://localhost:5000/product/QuantityAndName/${productname}`);
+    // const response = await fetch(`http://localhost:5000/product/QuantityAndName/Keyboard`);
+    const data = await response.json();
+    console.log("data for the adding ",data);
+    if (response.ok) {
+      const name:any = data[0].quantity; 
+     
+      setAvailabelQuantityforAdd(name);
+
+      console.log("availabele quantity", availabelQuantityforAdd)
+    } else {
+      console.error('Failed to fetch available quantity');
+    }
+ 
+  }catch(error){
+    console.log('error adding fetcing quanity',error);
+  }
+
+  }
   React.useEffect(() => {
     
     if (newProduct && productPrice && newQuantity !=='') {
@@ -578,10 +680,7 @@ const fetchOrders = async () => {
         accessorKey: 'product',
         header: 'Product Name',
       },
-      {
-        accessorKey: 'ordered_date',
-        header: 'Order Date',
-      },
+     
       {
         accessorKey: 'quantity',
         header: 'Quantity',
@@ -601,6 +700,10 @@ const fetchOrders = async () => {
       {
         accessorKey: 'address',
         header: 'Address',
+      },
+      {
+        accessorKey: 'ordered_date',
+        header: 'Order Date',
       },
       {
         accessorKey: 'actions',
@@ -658,12 +761,14 @@ const fetchOrders = async () => {
       sx: {
         border: '1px solid gray',
         backgroundColor: 'rgb(30, 78, 155)',
+        fontSize:'13px',
+        color:'white'
       },
     },
     muiTableBodyCellProps: {
       sx: {
         border: '1px solid gray',
-
+      fontSize:'13px'
       },
     },
   });
@@ -676,7 +781,7 @@ const fetchOrders = async () => {
         <h1 className={styles.heading}>Order Details</h1>
         {/* <HomePageData></HomePageData> */}
      
-        <OrderPageCartCard rows={rows}/>
+        <OrderPageCartCard AddOrder={handleAddOrderDialogOpen} availableQuantity={setAvailabelQuantityforAdd} productname={setNewProduct} rows={rows}/>
         
      
       <div className={styles.addButtontop}>
@@ -703,6 +808,7 @@ const fetchOrders = async () => {
               value={newProduct}
               onChange={(e) => handleInputChange('product', e.target.value)}
               className={styles.selectsfields}
+
             >
               {/* <MenuItem value="Laptop">Laptop</MenuItem>
               <MenuItem value="Mouse">Mouse</MenuItem>
@@ -711,14 +817,28 @@ const fetchOrders = async () => {
               <MenuItem value="Mobile">Mobile</MenuItem> */}
 
           {productDropDown.map((product, index) => (
-            <MenuItem key={index} value={product}>
+            <MenuItem key={index} value={product} data-myValue={product} onClick={handleclick} className='menuItem' >
               {product}
             </MenuItem>
           ))}
 
             </Select>
-            <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+            <FormHelperText className={styles.helperText} style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                   {addingOrderError.productAddError ? addingOrderError.productAddError: ' '}</FormHelperText>
+            <p className={styles.labeles}>Avaialbel Quantity<span className='requiredAsterisk'></span></p>
+            <TextField
+              size="small"
+              value={availabelQuantityforAdd}
+              // onChange={(e) => handleInputChange('quantity', e.target.value)}
+              margin="normal"
+              type="number"
+              inputProps={{min:0}}
+              disabled
+              className={`${styles.textField} ${styles.inputBaseRoot}`}
+            />
+            <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+            {availabelQuantityforAdd === '0'? 'Out of Stock': ' '}</FormHelperText>
+            
             <p className={styles.labeles}>Quantity<span className='requiredAsterisk'> *</span></p>
             <TextField
               size="small"
@@ -730,9 +850,9 @@ const fetchOrders = async () => {
               
               className={`${styles.textField} ${styles.inputBaseRoot}`}
             />
-            <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
+           
+                  <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
                   {addingOrderError.quantityAddError ? addingOrderError.quantityAddError: ' '}</FormHelperText>
-            
             <p className={styles.labeles}>Payment Method<span className='requiredAsterisk'> *</span></p>
           
                           <FormControl className={`${styles.radios} ${styles.inputBaseRoot}`}>
@@ -742,41 +862,32 @@ const fetchOrders = async () => {
                     row
                     className={styles.radios}
                   >
-                    <FormControlLabel
+                    <FormControlLabel  sx={{height:'22px'}}
+                      className={styles.radiosLabel}
                       value="creditCard"
                       control={<Radio />}
                       label="Credit Card"
-                      componentsProps={{
-                        typography: {
-                          style: {
-                            fontSize: '0.8rem', // Reduce the size here
-                          },
-                        },
-                      }}
+                      // componentsProps={{
+                      //   typography: {
+                      //     style: {
+                      //       fontSize: '12px', // Reduce the size here
+                      //     },
+                      //   },
+                      // }}
                     />
-                    <FormControlLabel
+                    <FormControlLabel  sx={{height:'22px'}}
+                    className={styles.radiosLabel}
                       value="paypal"
                       control={<Radio />}
                       label="PayPal"
-                      componentsProps={{
-                        typography: {
-                          style: {
-                            fontSize: '0.8rem', // Reduce the size here
-                          },
-                        },
-                      }}
+                     
                     />
-                    <FormControlLabel
+                    <FormControlLabel sx={{height:'22px'}}
+                    className={styles.radiosLabel}
                       value="bankTransfer"
                       control={<Radio />}
                       label="Bank Transfer"
-                      componentsProps={{
-                        typography: {
-                          style: {
-                            fontSize: '0.8rem', // Reduce the size here
-                          },
-                        },
-                      }}
+                      
                     />
                   </RadioGroup>
                 </FormControl>
@@ -830,12 +941,61 @@ const fetchOrders = async () => {
                      <CloseIcon />
                 </IconButton> 
           </Box>
-          <DialogContent className={styles.viewContent}>
-            <Typography variant="body1"><strong>Product:</strong> {selectedOrder?.product}</Typography>
+          <DialogContent className={styles.viewdailogs}>
+             <p className={styles.labelforview}>Product</p>
+             <TextField
+              size="small"
+              value={selectedOrder?.product}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+             <p className={styles.labelforview}>Quantity</p>
+             <TextField
+              size="small"
+              value={selectedOrder?.quantity}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+             <p className={styles.labelforview}>Price</p>
+             <TextField
+              size="small"
+              value={selectedOrder?.price}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+             <p className={styles.labelforview}>Address</p>
+             <TextField
+              size="small"
+              value={selectedOrder?.address}
+             
+              margin="normal"
+             
+              inputProps={{min:0}}
+              className={`${styles.textFields} ${styles.inputBaseRoots}`}
+             disabled
+            />
+             
+
+            {/* <Typography variant="body1"><strong>Product:</strong> {selectedOrder?.product}</Typography>
             <Typography variant="body1"><strong>Quantity:</strong> {selectedOrder?.quantity}</Typography>
             <Typography variant="body1"><strong>Price:</strong> {selectedOrder?.price}</Typography>
-            <Typography variant="body1"><strong>Address:</strong> {selectedOrder?.address}</Typography>
+            <Typography variant="body1"><strong>Address:</strong> {selectedOrder?.address}</Typography> */}
           </DialogContent>
+
+
+          
           <DialogActions>
             <Button onClick={handleClose} color="secondary"   className='mainButton'>
              <Typography textTransform={'none'}>Close</Typography>
@@ -844,14 +1004,14 @@ const fetchOrders = async () => {
         </Dialog>
 
         {/* Edit Order Dialog */}
-        <Dialog open={editOpen} onClose={handleCloseEditDialog}>
+        <Dialog open={editOpen} onClose={handleCloseEditDialog} className={styles.dialog}>
         <Box className={styles.closearrow}>
             <DialogTitle className='dialogTitle'>Edit Product</DialogTitle>
                 <IconButton onClick={handleCloseEditDialog}>
                      <CloseIcon />
                 </IconButton> 
           </Box>
-          <DialogContent>
+          <DialogContent className={styles.dai}>
             <p className={styles.labeles}>Product<span className='requiredAsterisk'> *</span></p>
             {/* <Select
               value={newProduct}
@@ -870,21 +1030,23 @@ const fetchOrders = async () => {
               onChange={(e, newValue) => handleInputChange('product', newValue || '')}
               options={productDropDown}
               className={styles.auto}
+              disabled
               // freeSolo // Allow custom input (this allows users to type their own value)
               renderInput={(params) => <TextField {...params} size="small"   />}
               />
             <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
             {addOrderError.productError ? addOrderError.productError: ' '}</FormHelperText>
 
-            <p className={styles.labeles}>Availabel Quantity<span className='requiredAsterisk'> *</span></p>
+            <p className={styles.labeles}>Availabel Quantity<span className='requiredAsterisk'></span></p>
             <TextField
               size="small"
-              value={newQuantity}
-              onChange={(e) => handleInputChange('quantity', e.target.value)}
+              value={availabelQuantity}
+              // onChange={(e) => handleInputChange('quantity', e.target.value)}
               margin="normal"
               type="number"
               inputProps={{min:0}}
               className={`${styles.textField} ${styles.inputBaseRoot}`}
+             disabled
             />
              <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
              {addOrderError.quantityError ? addOrderError.quantityError: ' '}</FormHelperText>
@@ -901,33 +1063,15 @@ const fetchOrders = async () => {
               <FormHelperText style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
               {addOrderError.quantityError ? addOrderError.quantityError: ' '}</FormHelperText>
             <p className={styles.labeles}>Payment Method<span className='requiredAsterisk'> *</span></p>
-            <FormControl className={`${styles.radios} ${styles.inputBaseRoot}`}>
+            <FormControl className={`${styles.radios} `}>
               <RadioGroup
                 value={newPaymentMethod}
                 onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
                 row
               >
-                <FormControlLabel value="creditCard" control={<Radio />} label="Credit Card"  componentsProps={{
-        typography: {
-          style: {
-            fontSize: '0.8rem', // Reduce the size here
-          },
-        },
-      }} />
-                <FormControlLabel value="paypal" control={<Radio />} label="PayPal"   componentsProps={{
-        typography: {
-          style: {
-            fontSize: '0.8rem', // Reduce the size here
-          },
-        },
-      }}/>
-                <FormControlLabel value="bankTransfer" control={<Radio />} label="Bank Transfer"  componentsProps={{
-        typography: {
-          style: {
-            fontSize: '0.8rem', // Reduce the size here
-          },
-        },
-      }} />
+                <FormControlLabel sx={{height:'22px'}}  className={styles.radiosLabel} value="creditCard" control={<Radio />} label="Credit Card"  />
+                <FormControlLabel    sx={{height:'22px'}}  className={styles.radiosLabel} value="paypal" control={<Radio />} label="PayPal"   />
+                <FormControlLabel  sx={{height:'22px'}}  className={styles.radiosLabel} value="bankTransfer" control={<Radio />} label="Bank Transfer"  />
               </RadioGroup>
             </FormControl>
             <p style={{ margin:"0px", marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: '11px' }}>
@@ -962,8 +1106,11 @@ const fetchOrders = async () => {
                      <CloseIcon />
                 </IconButton> 
           </Box>
-          <DialogContent>
-            <Typography variant="body1">Are you sure you want to delete this order?</Typography>
+          <DialogContent className='deltecontent'>
+            {/* <Typography variant="body1">Are you sure you want to delete this order? {selectedOrder?.product}</Typography> */}
+            <div>
+                <p><strong>Are you sure you want to delete this product?</strong>{selectedOrder?.product}</p>
+              </div> 
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseDeleteDialog} color="secondary" className='mainButton'>

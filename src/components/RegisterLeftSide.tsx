@@ -1,7 +1,6 @@
 import { Box, Typography, TextField, Stack, InputAdornment, Button, Tooltip } from "@mui/material";
-import { MdEmail } from "react-icons/md";
 import styles from './RegisterLeftSide.module.css';
-import { FaFacebookF, FaUser, FaLock, FaGithub, FaEyeSlash, FaEye } from "react-icons/fa";
+import { FaFacebookF, FaUser, FaGithub, FaEyeSlash, FaEye, FaAt } from "react-icons/fa";
 import { IoLogoLinkedin } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
 import { useState, useEffect, useCallback } from "react";
@@ -34,7 +33,7 @@ const RightSide = ({ setLogin }: { setLogin: React.Dispatch<React.SetStateAction
 
   useEffect(() => {
     console.log("RightSide");
-  }, []); // This logs only once when the component mounts.
+  }, []); 
 
   const handleInputChange = useCallback((field: keyof typeof registerUserDetails, value: string) => {
     if (registerUserDetails[field] !== value) {
@@ -168,12 +167,25 @@ const RightSide = ({ setLogin }: { setLogin: React.Dispatch<React.SetStateAction
   const toggleConfirmPasswordVisibility = () => {
     setPasswordConfirmVisible(!passwordConfirmVisible);
   };
+  const YettoImplement =()=>{
+    toast.warning("Yet to implement this feature",{
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    
+      
+
+    })
+  }
   return (
     <form onSubmit={handleSubmit}>
       <ToastContainer />
 
       <Box className={styles.RegisterLeftSideContainer} sx={{ width: '100%', maxWidth: 500 }}>
-        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold" ,color:'rgb(118, 173, 235)'}}>
         Sign Up
         </Typography>
         <Stack direction={"column"} spacing={2} width={"80%"}>
@@ -227,7 +239,7 @@ const RightSide = ({ setLogin }: { setLogin: React.Dispatch<React.SetStateAction
             value={registerUserDetails.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
             InputProps={{
-              endAdornment: <InputAdornment position='end'><MdEmail /></InputAdornment>,
+              endAdornment: <InputAdornment position='end'><FaAt /></InputAdornment>,
             }}
           />
           <p style={{ marginTop: "0px", whiteSpace: "preserve", color: 'red', fontSize: "12px" }}>
@@ -287,23 +299,23 @@ const RightSide = ({ setLogin }: { setLogin: React.Dispatch<React.SetStateAction
           or Signup with social platforms
         </Typography>
         <Stack direction={"row"} spacing={2} className={styles.iconbutton}>
-          <Tooltip  title="yet to implement this features" arrow>
-            <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }}>
+          <Tooltip  title="Google" arrow>
+            <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }}onClick={YettoImplement} >
               <FcGoogle size={20} />
             </Button>
           </Tooltip>
-          <Tooltip  title="yet to implement this features" arrow>
-            <Button variant="outlined" className={styles.IconButton2} sx={{ minWidth: '10px' }}>
+          <Tooltip  title="FaceBook" arrow>
+            <Button variant="outlined" className={styles.IconButton2} sx={{ minWidth: '10px' }} onClick={YettoImplement} >
               <FaFacebookF size={20} />
             </Button>
           </Tooltip>
-          <Tooltip title="yet to implement this features" arrow>
-            <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }}>
+          <Tooltip title="GitHub" arrow>
+            <Button variant="outlined" className={styles.IconButton} sx={{ minWidth: '10px' }} onClick={YettoImplement} >
               <FaGithub size={20} />
             </Button>
           </Tooltip>
-          <Tooltip  title="yet to implement this features" arrow>
-            <Button variant="outlined" className={styles.IconButton3} sx={{ minWidth: '10px' }}>
+          <Tooltip  title="Linkedin" arrow>
+            <Button variant="outlined" className={styles.IconButton3} sx={{ minWidth: '10px' }} onClick={YettoImplement} >
               <IoLogoLinkedin size={20} />
             </Button>
           </Tooltip>

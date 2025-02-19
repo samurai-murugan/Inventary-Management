@@ -109,6 +109,7 @@ const DonutChart = () => {
         x: am5.percent(50),
         marginTop: 15,
         marginBottom: 15,
+        
       }));
       legend.markerRectangles.template.adapters.add("fillGradient", function() {
         return undefined;
@@ -118,7 +119,9 @@ const DonutChart = () => {
       series.appear(1000, 100);
 
       series.labels.template.setAll({
-        text:'{category}'
+        text:'{category}',
+        fontSize:'13px',
+      
       });
 
       return () => {
@@ -128,20 +131,20 @@ const DonutChart = () => {
   }, [data]);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '200px' }}>
+    <div style={{ position: 'relative', width: '100%', height: '350px' }}>
     {data.length === 0 ? (
       <div style={{ 
         position: 'absolute', 
         top: '50%', 
         left: '50%', 
         transform: 'translate(-50%, -50%)', 
-        fontSize: '20px', 
+        fontSize: '14px', 
         color: 'gray' 
       }}>
         No Products Available
       </div>
     ) : (
-      <div id="chartDiv" style={{ width: "100%", height: '200px' }}></div>
+      <div id="chartDiv" style={{ width: "100%", height: '350px' }}></div>
     )}
   </div>
  

@@ -17,6 +17,7 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
   const userRole = localStorage.getItem('userRole');
   const userName = localStorage.getItem('userName');
   const userEmail = localStorage.getItem('userEmail');
+  const logintime = localStorage.getItem('loginTime');
   const [anchorElSettings, setAnchorElSettings] = React.useState<null | HTMLElement>(null);
   const [anchorElAvatar, setAnchorElAvatar] = React.useState<null | HTMLElement>(null);
   const navigate = useNavigate(); // For navigation
@@ -187,11 +188,14 @@ const Header: React.FC<HeaderProps> = ({ open, onUserAddClick }) => {
               {avatarLetter}
             </Avatar>
             <div>
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+              <Typography variant="body1" sx={{ fontWeight: 'bold' ,fontSize:"13px"}}>
                 {userName}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'gray' }}>
+              <Typography variant="body2" sx={{ color: 'gray' ,fontSize:"13px"}}>
                 {userEmail}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'gray',fontSize:"13px" }}>
+               {`Last Sign in: `} {logintime}
               </Typography>
             </div>
           </div>
